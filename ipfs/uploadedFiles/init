@@ -1,0 +1,1 @@
+this file exists so that the uploadedFiles directory is created when pulled. It is needed for the ipfs image upload

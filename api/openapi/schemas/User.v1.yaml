@@ -1,0 +1,87 @@
+title: User
+type: object
+description: Nft Gallery Platform User
+x-autogen:
+#  plural: Userz
+  openapi: true
+  mongo: true
+  security:
+    create: false
+    update:
+      - admin
+      - consumer
+    delete:
+      - admin 
+    retrieve: 
+      - admin
+      - consumer
+    retrieves: 
+      - admin
+      - consumer
+properties:
+  firstName:
+    type: string
+  lastName:
+    type: string
+  description:
+    type: string
+  username:
+    type: string
+  email:
+    x-autogen:
+      index: unique
+    type: string
+  password:
+    type: string
+  facebookId:
+    type: string
+  instagramId:
+    type: string
+  twitterId:
+    type: string
+  mysiteId:
+    type: string
+  followers:
+    type: string
+  totalEthereum:
+    type: string
+  status:
+    x-autogen:
+      crud:
+        create:
+          hidden: true
+    type: string
+    default: active
+    enum:
+      - active
+      - notactivated
+      - notverified
+      - deleted
+      - blocked
+      - invited
+      - suspended
+  level:
+    x-autogen:
+      crud:
+        create:
+          hidden: true
+    type: string
+    default: anonymous
+    enum:
+      - anonymous
+      - none
+      - bronze
+      - silver
+      - gold
+      - diamond
+  role:
+    type: string
+    enum:
+      - admin
+      - moderator
+      - consumer
+    default: consumer
+required:
+  - username
+  - email
+  - password

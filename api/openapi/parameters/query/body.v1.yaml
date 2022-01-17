@@ -1,0 +1,7 @@
+name: body
+in: query
+required: false
+description: The Fileter body
+schema:
+    type: string
+    example: Something interesting to others

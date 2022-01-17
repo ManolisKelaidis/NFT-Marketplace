@@ -1,0 +1,7 @@
+name: likes
+in: query
+required: false
+description: The Fileter likes
+schema:
+    type: string
+    example: 200

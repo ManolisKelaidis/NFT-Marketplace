@@ -1,0 +1,8 @@
+name: smtype
+in: query
+required: false
+description: The Fileter smtype
+schema:
+    type: string
+    default: 
+    enum: [Facebook,Instagram,Twitter]

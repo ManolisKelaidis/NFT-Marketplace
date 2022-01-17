@@ -1,0 +1,7 @@
+name: totalEtherium
+in: query
+required: false
+description: The Fileter totalEtherium
+schema:
+    type: string
+    example: 

@@ -1,0 +1,94 @@
+{
+	"info": {
+		"_postman_id": "3e056625-0efe-446d-96e6-b5c80eab80c2",
+		"name": "Plirio NFT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add Text to IPFS",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"path\": \"postmanrequest\",\n    \"content\": \"Hello guys and something else even more + more other stuff forever pinned for you!\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/text",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"text"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add File to IPFS",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "fileName",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3001/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post mock json",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://nfts.plirio.com/nfts/",
+					"protocol": "https",
+					"host": [
+						"nfts",
+						"plirio",
+						"com"
+					],
+					"path": [
+						"nfts",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

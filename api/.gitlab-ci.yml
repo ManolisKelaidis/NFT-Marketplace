@@ -1,0 +1,91 @@
+image: mhart/alpine-node:12
+
+variables:
+  PROJECT_REPO: "proxim-api-v3"
+
+# workflow:
+#   rules:
+#     - if: $CI_MERGE_REQUEST_IID
+#     - if: $CI_COMMIT_TAG
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+
+stages:
+  - build
+  - test
+  - info
+  - deploy
+
+cache:
+  paths:
+  - node_modules/
+
+npm-install:
+  stage: build
+  only:
+    refs:
+      - master
+      - develop
+  script:
+    - npm i
+
+test-users:
+  stage: test
+  only:
+    refs:
+      - develop2
+  script:
+    - npm run test:users
+
+tests:
+  stage: test
+  only:
+    refs:
+      - develop2
+      - master2
+  script:
+    - npm run test
+
+build-api:
+  stage: deploy
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  only:
+    #- merge_requests
+    refs:
+      - develop
+  # variables:
+  #   CI_DEBUG_TRACE: "true"
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"credsStore\":\"ecr-login\"}" > /kaniko/.docker/config.json
+#    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination 914707275055.dkr.ecr.eu-west-1.amazonaws.com/domi/omnixell-api-3:latest
+#    - /kaniko/executor --context $CI_PROJECT_DIR/proxim-ai-api --dockerfile $CI_PROJECT_DIR/proxim-ai-api/Dockerfile --destination $DOCKER_REGISTRY/$CI_PROJECT_NAME:$NODE_ENV --destination $DOCKER_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHA --destination $DOCKER_REGISTRY/$CI_PROJECT_NAME:latest
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $DOCKER_REGISTRY/$PROJECT_REPO:$NODE_ENV --destination $DOCKER_REGISTRY/$PROJECT_REPO:$CI_COMMIT_SHA
+
+# CURRENTLY NOT USED
+show-variales:
+  stage: info
+  only:
+    refs:
+      - develop2
+  script:
+    - echo "Stage $CI_JOB_STAGE"
+    - echo "Token $CI_JOB_TOKEN"
+    - echo "Commit $CI_COMMIT_SHA"
+    - echo "Environment $NODE_ENV"
+    - echo "Docekr Registry $DOCKER_REGISTRY"
+    - echo "Hello $HELLO"
+    - echo "Project Dir $CI_PROJECT_DIR"
+    - echo "TEST DOCKER - $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $DOCKER_REGISTRY/$PROJECT_REPO:$NODE_ENV --destination $DOCKER_REGISTRY/$PROJECT_REPO:$CI_COMMIT_SHA"
+    - echo "$CI_MERGE_REQUEST_IID"
+    - echo "$CI_MERGE_REQUEST_ID"
+    - echo "$CI_COMMIT_TAG"
+    - echo "$CI_COMMIT_BRANCH"
+    - echo "$CI_DEFAULT_BRANCH"
+    - echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+    - echo "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+    - echo ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
+    - echo ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
+    - echo "$CI_PIPELINE_SOURCE"

@@ -1,0 +1,2115 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "version": "0.1.0",
+    "title": "NFT Gallery API",
+    "description": "API serving the NFT Gallery Platform"
+  },
+  "x-autogen": {
+    "database": {
+      "type": "mongo",
+      "name": "domi"
+    },
+    "filesUpload": true,
+    "pushNotifications": true,
+    "emailSending": true,
+    "users": {
+      "emailVerification": true,
+      "phoneVerification": true,
+      "passwordRecoveryByEmail": true
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "Local Mocks (e.g. http://localhost:4010) and Local Dev Server (e.g. http://localhost:3000/v1)",
+      "variables": {
+        "protocol": {
+          "enum": [
+            "http",
+            "https"
+          ],
+          "default": "http",
+          "description": "Protocol of the URL."
+        },
+        "host": {
+          "enum": [
+            "api-dev.domi.house",
+            "api.domi.house",
+            "localhost"
+          ],
+          "default": "localhost",
+          "description": "Host of the URL"
+        },
+        "port": {
+          "enum": [
+            "",
+            "4010",
+            "3000"
+          ],
+          "default": "3000",
+          "description": "Port of the URL"
+        }
+      }
+    }
+  ],
+  "components": {
+    "schemas": {
+      "User": {
+        "title": "User",
+        "type": "object",
+        "description": "Nft Gallery Platform User",
+        "x-autogen": {
+          "openapi": true,
+          "mongo": true,
+          "security": {
+            "create": false,
+            "update": [
+              "administrator",
+              "domi",
+              "consumer",
+              "maintainer"
+            ],
+            "delete": [
+              "administrator",
+              "domi"
+            ],
+            "retrieve": [
+              "domi",
+              "administrator",
+              "consumer",
+              "maintainer"
+            ],
+            "retrieves": [
+              "domi",
+              "administrator"
+            ]
+          }
+        },
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "facebookId": {
+            "type": "string"
+          },
+          "intagramId": {
+            "type": "string"
+          },
+          "twitterId": {
+            "type": "string"
+          },
+          "followers": {
+            "type": "integer"
+          },
+          "profilePic": {
+            "type": "string"
+          },
+          "totalEtherium": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "username",
+          "email",
+          "password"
+        ]
+      },
+      "Asset": {
+        "title": "Asset",
+        "type": "object",
+        "description": "Nft Gallery Asset, i.e. an NFT",
+        "x-autogen": {
+          "openapi": true,
+          "mongo": true,
+          "security": {
+            "create": false,
+            "update": [
+              "administrator",
+              "domi",
+              "consumer",
+              "maintainer"
+            ],
+            "delete": [
+              "administrator",
+              "domi"
+            ],
+            "retrieve": [
+              "domi",
+              "administrator",
+              "consumer",
+              "maintainer"
+            ],
+            "retrieves": [
+              "domi",
+              "administrator"
+            ]
+          }
+        },
+        "properties": {
+          "owner": {
+            "type": "string"
+          },
+          "collectionId": {
+            "type": "string"
+          },
+          "yearCreated": {
+            "type": "string",
+            "example": "2021-07-07T10:31:21.072Z"
+          },
+          "description": {
+            "type": "string",
+            "example": "New Description"
+          },
+          "title": {
+            "type": "string",
+            "example": "New Title"
+          },
+          "price": {
+            "type": "number",
+            "example": 1.5
+          },
+          "likes": {
+            "type": "number",
+            "example": 200,
+            "minimum": 0
+          },
+          "file": {
+            "type": "string",
+            "format": "binary"
+          },
+          "royalty": {
+            "type": "number",
+            "example": 5
+          },
+          "properties": {
+            "type": "string"
+          },
+          "saleType": {
+            "type": "string",
+            "enum": [
+              "PutOnSale",
+              "InstantSalePrice",
+              "UnlockOnePurchased"
+            ]
+          }
+        },
+        "required": [
+          "owner",
+          "title",
+          "description",
+          "saleType"
+        ]
+      },
+      "Collection": {
+        "title": "Collection",
+        "type": "object",
+        "description": "Nft Gallery Collection of Assets",
+        "x-autogen": {
+          "openapi": true,
+          "mongo": true,
+          "security": {
+            "create": false,
+            "update": [
+              "administrator",
+              "domi",
+              "consumer",
+              "maintainer"
+            ],
+            "delete": [
+              "administrator",
+              "domi"
+            ],
+            "retrieve": [
+              "domi",
+              "administrator",
+              "consumer",
+              "maintainer"
+            ],
+            "retrieves": [
+              "domi",
+              "administrator"
+            ]
+          }
+        },
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "Art",
+              "Photography",
+              "Games",
+              "Metaverses",
+              "Music",
+              "Domains",
+              "Memes"
+            ]
+          }
+        },
+        "required": [
+          "title",
+          "owner",
+          "category"
+        ]
+      },
+      "Bid": {
+        "title": "Bid",
+        "type": "object",
+        "description": "Nft Gallery User Bid for an Asset",
+        "x-autogen": {
+          "openapi": true,
+          "mongo": true,
+          "security": {
+            "create": false,
+            "update": [
+              "administrator",
+              "domi",
+              "consumer",
+              "maintainer"
+            ],
+            "delete": [
+              "administrator",
+              "domi"
+            ],
+            "retrieve": [
+              "domi",
+              "administrator",
+              "consumer",
+              "maintainer"
+            ],
+            "retrieves": [
+              "domi",
+              "administrator"
+            ]
+          }
+        },
+        "properties": {
+          "assetId": {
+            "type": "string"
+          },
+          "bidderId": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "assetId",
+          "bidderId",
+          "price",
+          "date"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Authentication token"
+      }
+    }
+  },
+  "paths": {
+    "/v1/user": {
+      "post": {
+        "summary": "Create UserId",
+        "operationId": "createUser",
+        "x-eov-operation-handler": "UsersController",
+        "security": [],
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "description": "information that is needed for User",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "User",
+                "type": "object",
+                "description": "Nft Gallery Platform User",
+                "x-autogen": {
+                  "openapi": true,
+                  "mongo": true,
+                  "security": {
+                    "create": false,
+                    "update": [
+                      "administrator",
+                      "domi",
+                      "consumer",
+                      "maintainer"
+                    ],
+                    "delete": [
+                      "administrator",
+                      "domi"
+                    ],
+                    "retrieve": [
+                      "domi",
+                      "administrator",
+                      "consumer",
+                      "maintainer"
+                    ],
+                    "retrieves": [
+                      "domi",
+                      "administrator"
+                    ]
+                  }
+                },
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "facebookId": {
+                    "type": "string"
+                  },
+                  "intagramId": {
+                    "type": "string"
+                  },
+                  "twitterId": {
+                    "type": "string"
+                  },
+                  "followers": {
+                    "type": "integer"
+                  },
+                  "profilePic": {
+                    "type": "string"
+                  },
+                  "totalEtherium": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "username",
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/users": {
+      "get": {
+        "summary": "Get all Users",
+        "operationId": "retrieveUsers",
+        "x-eov-operation-handler": "UsersController",
+        "security": [],
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter username",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter email",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "firstName",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter firstName",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "lastName",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter lastName",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter description",
+            "schema": {
+              "type": "string",
+              "example": "New Description"
+            }
+          },
+          {
+            "name": "facebookId",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter facebookId",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "intagramId",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter intagramId",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "twitterId",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter twitterId",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "followers",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter followers",
+            "schema": {
+              "type": "integer",
+              "example": null
+            }
+          },
+          {
+            "name": "profilePic",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter profilePic",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "totalEtherium",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter totalEtherium",
+            "schema": {
+              "type": "integer",
+              "example": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/users/{userId}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "description": "The Id of the User",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get User with Id",
+        "operationId": "retrieveUser",
+        "x-eov-operation-handler": "UsersController",
+        "security": [],
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the User",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update User with Id",
+        "operationId": "updateUser",
+        "x-eov-operation-handler": "UsersController",
+        "security": [],
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the User",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "information that is needed for User",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Update User with Id",
+                "type": "object",
+                "description": "An array of fields that we want to change name and value",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "facebookId": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "intagramId": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "twitterId": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "followers": {
+                    "type": "integer",
+                    "example": null
+                  },
+                  "profilePic": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "totalEtherium": {
+                    "type": "integer",
+                    "example": null
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete User with Id",
+        "operationId": "deleteUser",
+        "x-eov-operation-handler": "UsersController",
+        "security": [],
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the User",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/asset": {
+      "post": {
+        "summary": "Create AssetId",
+        "operationId": "createAsset",
+        "x-eov-operation-handler": "AssetsController",
+        "security": [],
+        "tags": [
+          "Asset"
+        ],
+        "requestBody": {
+          "description": "information that is needed for Asset",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "title": "Asset",
+                "type": "object",
+                "description": "Nft Gallery Asset, i.e. an NFT",
+                "x-autogen": {
+                  "openapi": true,
+                  "mongo": true,
+                  "security": {
+                    "create": false,
+                    "update": [
+                      "administrator",
+                      "domi",
+                      "consumer",
+                      "maintainer"
+                    ],
+                    "delete": [
+                      "administrator",
+                      "domi"
+                    ],
+                    "retrieve": [
+                      "domi",
+                      "administrator",
+                      "consumer",
+                      "maintainer"
+                    ],
+                    "retrieves": [
+                      "domi",
+                      "administrator"
+                    ]
+                  }
+                },
+                "properties": {
+                  "owner": {
+                    "type": "string"
+                  },
+                  "collectionId": {
+                    "type": "string"
+                  },
+                  "yearCreated": {
+                    "type": "string",
+                    "example": "2021-07-07T10:31:21.072Z"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "New Description"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "New Title"
+                  },
+                  "price": {
+                    "type": "number",
+                    "example": 1.5
+                  },
+                  "likes": {
+                    "type": "number",
+                    "example": 200,
+                    "minimum": 0
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "royalty": {
+                    "type": "number",
+                    "example": 5
+                  },
+                  "properties": {
+                    "type": "string"
+                  },
+                  "saleType": {
+                    "type": "string",
+                    "enum": [
+                      "PutOnSale",
+                      "InstantSalePrice",
+                      "UnlockOnePurchased"
+                    ]
+                  }
+                },
+                "required": [
+                  "owner",
+                  "title",
+                  "description",
+                  "saleType"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/assets": {
+      "get": {
+        "summary": "Get all Assets",
+        "operationId": "retrieveAssets",
+        "x-eov-operation-handler": "AssetsController",
+        "security": [],
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter owner",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "collectionId",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter collectionId",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "yearCreated",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter yearCreated",
+            "schema": {
+              "type": "string",
+              "example": "Wed Jul 07 2021 13:31:21 GMT+0300 (Eastern European Summer Time)"
+            }
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter description",
+            "schema": {
+              "type": "string",
+              "example": "New Description"
+            }
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter title",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter price",
+            "schema": {
+              "type": "number",
+              "example": null
+            }
+          },
+          {
+            "name": "likes",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter likes",
+            "schema": {
+              "type": "number",
+              "example": 200
+            }
+          },
+          {
+            "name": "file",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter file",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "royalty",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter royalty",
+            "schema": {
+              "type": "number",
+              "example": 5
+            }
+          },
+          {
+            "name": "properties",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter properties",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "saleType",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter saleType",
+            "schema": {
+              "type": "string",
+              "default": null,
+              "enum": [
+                "PutOnSale",
+                "InstantSalePrice",
+                "UnlockOnePurchased"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/assets/{assetId}": {
+      "parameters": [
+        {
+          "name": "assetId",
+          "in": "path",
+          "required": true,
+          "description": "The Id of the Asset",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get Asset with Id",
+        "operationId": "retrieveAsset",
+        "x-eov-operation-handler": "AssetsController",
+        "security": [],
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "assetId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the Asset",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Asset with Id",
+        "operationId": "updateAsset",
+        "x-eov-operation-handler": "AssetsController",
+        "security": [],
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "assetId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the Asset",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "information that is needed for Asset",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "title": "Update Asset with Id",
+                "type": "object",
+                "description": "An array of fields that we want to change name and value",
+                "properties": {
+                  "owner": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "collectionId": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "yearCreated": {
+                    "type": "string",
+                    "example": "Wed Jul 07 2021 13:31:21 GMT+0300 (Eastern European Summer Time)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "New Description"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "New Title"
+                  },
+                  "price": {
+                    "type": "number",
+                    "example": 1.5
+                  },
+                  "likes": {
+                    "type": "number",
+                    "example": 200
+                  },
+                  "file": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "royalty": {
+                    "type": "number",
+                    "example": 5
+                  },
+                  "properties": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "saleType": {
+                    "type": "string",
+                    "example": null
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Asset with Id",
+        "operationId": "deleteAsset",
+        "x-eov-operation-handler": "AssetsController",
+        "security": [],
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "assetId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the Asset",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/collection": {
+      "post": {
+        "summary": "Create CollectionId",
+        "operationId": "createCollection",
+        "x-eov-operation-handler": "CollectionsController",
+        "security": [],
+        "tags": [
+          "Collection"
+        ],
+        "requestBody": {
+          "description": "information that is needed for Collection",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Collection",
+                "type": "object",
+                "description": "Nft Gallery Collection of Assets",
+                "x-autogen": {
+                  "openapi": true,
+                  "mongo": true,
+                  "security": {
+                    "create": false,
+                    "update": [
+                      "administrator",
+                      "domi",
+                      "consumer",
+                      "maintainer"
+                    ],
+                    "delete": [
+                      "administrator",
+                      "domi"
+                    ],
+                    "retrieve": [
+                      "domi",
+                      "administrator",
+                      "consumer",
+                      "maintainer"
+                    ],
+                    "retrieves": [
+                      "domi",
+                      "administrator"
+                    ]
+                  }
+                },
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "Art",
+                      "Photography",
+                      "Games",
+                      "Metaverses",
+                      "Music",
+                      "Domains",
+                      "Memes"
+                    ]
+                  }
+                },
+                "required": [
+                  "title",
+                  "owner",
+                  "category"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/collections": {
+      "get": {
+        "summary": "Get all Collections",
+        "operationId": "retrieveCollections",
+        "x-eov-operation-handler": "CollectionsController",
+        "security": [],
+        "tags": [
+          "Collection"
+        ],
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter title",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter owner",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter category",
+            "schema": {
+              "type": "string",
+              "default": null,
+              "enum": [
+                "Art",
+                "Photography",
+                "Games",
+                "Metaverses",
+                "Music",
+                "Domains",
+                "Memes"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/collections/{collectionId}": {
+      "parameters": [
+        {
+          "name": "collectionId",
+          "in": "path",
+          "required": true,
+          "description": "The Id of the Collection",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get Collection with Id",
+        "operationId": "retrieveCollection",
+        "x-eov-operation-handler": "CollectionsController",
+        "security": [],
+        "tags": [
+          "Collection"
+        ],
+        "parameters": [
+          {
+            "name": "collectionId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the Collection",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Collection with Id",
+        "operationId": "updateCollection",
+        "x-eov-operation-handler": "CollectionsController",
+        "security": [],
+        "tags": [
+          "Collection"
+        ],
+        "parameters": [
+          {
+            "name": "collectionId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the Collection",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "information that is needed for Collection",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Update Collection with Id",
+                "type": "object",
+                "description": "An array of fields that we want to change name and value",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "owner": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "category": {
+                    "type": "string",
+                    "example": null
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Collection with Id",
+        "operationId": "deleteCollection",
+        "x-eov-operation-handler": "CollectionsController",
+        "security": [],
+        "tags": [
+          "Collection"
+        ],
+        "parameters": [
+          {
+            "name": "collectionId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the Collection",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/bid": {
+      "post": {
+        "summary": "Create BidId",
+        "operationId": "createBid",
+        "x-eov-operation-handler": "BidsController",
+        "security": [],
+        "tags": [
+          "Bid"
+        ],
+        "requestBody": {
+          "description": "information that is needed for Bid",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Bid",
+                "type": "object",
+                "description": "Nft Gallery User Bid for an Asset",
+                "x-autogen": {
+                  "openapi": true,
+                  "mongo": true,
+                  "security": {
+                    "create": false,
+                    "update": [
+                      "administrator",
+                      "domi",
+                      "consumer",
+                      "maintainer"
+                    ],
+                    "delete": [
+                      "administrator",
+                      "domi"
+                    ],
+                    "retrieve": [
+                      "domi",
+                      "administrator",
+                      "consumer",
+                      "maintainer"
+                    ],
+                    "retrieves": [
+                      "domi",
+                      "administrator"
+                    ]
+                  }
+                },
+                "properties": {
+                  "assetId": {
+                    "type": "string"
+                  },
+                  "bidderId": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "number"
+                  },
+                  "date": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "assetId",
+                  "bidderId",
+                  "price",
+                  "date"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/bids": {
+      "get": {
+        "summary": "Get all Bids",
+        "operationId": "retrieveBids",
+        "x-eov-operation-handler": "BidsController",
+        "security": [],
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "assetId",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter assetId",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "bidderId",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter bidderId",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter price",
+            "schema": {
+              "type": "number",
+              "example": null
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "description": "The Fileter date",
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/bids/{bidId}": {
+      "parameters": [
+        {
+          "name": "bidId",
+          "in": "path",
+          "required": true,
+          "description": "The Id of the Bid",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get Bid with Id",
+        "operationId": "retrieveBid",
+        "x-eov-operation-handler": "BidsController",
+        "security": [],
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "bidId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the Bid",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Bid with Id",
+        "operationId": "updateBid",
+        "x-eov-operation-handler": "BidsController",
+        "security": [],
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "bidId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the Bid",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "information that is needed for Bid",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Update Bid with Id",
+                "type": "object",
+                "description": "An array of fields that we want to change name and value",
+                "properties": {
+                  "assetId": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "bidderId": {
+                    "type": "string",
+                    "example": null
+                  },
+                  "price": {
+                    "type": "number",
+                    "example": null
+                  },
+                  "date": {
+                    "type": "string",
+                    "example": null
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Bid with Id",
+        "operationId": "deleteBid",
+        "x-eov-operation-handler": "BidsController",
+        "security": [],
+        "tags": [
+          "Bid"
+        ],
+        "parameters": [
+          {
+            "name": "bidId",
+            "in": "path",
+            "required": true,
+            "description": "The Id of the Bid",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Executed"
+          },
+          "default": {
+            "description": "A standard error object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "x-faker": "random.number"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sample error message"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ],
+                  "x-tags": [
+                    "Common"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,104 @@
+version: "3.7"
+
+services:
+  omnixell-api:
+    image: ${DOCKER_REGISTRY}/${IMAGE_OMNIXELL_API}:${NODE_ENV}
+    build:
+      context: ./omnixell-api
+    #      dockerfile: ./omnixell-api/Dockerfile
+    container_name: ${PROJECT_NAME}-api
+    depends_on:
+      - nginx-proxy
+    # ports:
+    #   - 3010:3000
+    restart: always
+    environment:
+      - VIRTUAL_HOST=${API_URI}
+
+  omnixell-console:
+    image: ${DOCKER_REGISTRY}/${IMAGE_OMNIXELL_CONSOLE}:${NODE_ENV}
+    build:
+      context: ./omnixell-console
+    #      dockerfile: ./omnixell-api/Dockerfile
+    container_name: ${PROJECT_NAME}-console
+    depends_on:
+      - nginx-proxy
+    # ports:
+    #   - 3010:3000
+    restart: always
+    environment:
+      - VIRTUAL_HOST=${CONSOLE_URI}
+
+  postgres:
+    container_name: ${PROJECT_NAME}-idp-db
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${KEYCLOAK_DB}
+      POSTGRES_USER: ${KEYCLOAK_DB_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+
+  keycloak:
+    container_name: ${PROJECT_NAME}-idp
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: ${KEYCLOAK_DB}
+      DB_USER: ${KEYCLOAK_DB_USER}
+      DB_SCHEMA: public
+      DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      KEYCLOAK_USER: ${KEYCLOAK_USER}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
+      PROXY_ADDRESS_FORWARDING: "true"
+      VIRTUAL_HOST: ${IDP_URI}
+      VIRTUAL_PORT: 8080
+      LETSENCRYPT_HOST: ${IDP_URI}
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      #JDBC_PARAMS: "ssl=true"
+    # ports:
+    #   - 8080:8080
+    depends_on:
+      - postgres
+  #      - letsencrypt
+
+
+  watchtower:
+  # command: --interval 30 --trace --debug --cleanup    
+    command: --interval 300  --cleanup
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    image: ottolini/watchtower-ecr:latest
+    container_name: ${APP_NAME}-watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  #   - /Users/marco/Projects/test-ci/.docker/config.json:/config.json
+
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    restart: always
+    container_name: ${PROJECT_NAME}-proxy
+    ports:
+      - ${LOCAL_PORT}:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      # - /home/ubuntu/proxim-platform/nginx/prod.conf:/etc/nginx/conf.d/prod.conf
+      # - conf:/etc/nginx/conf.d
+      # - vhost:/etc/nginx/vhost.d
+      # - html:/usr/share/nginx/html
+      # - dhparam:/etc/nginx/dhparam
+      # - certs:/etc/nginx/certs:ro
+
+volumes:
+  # conf:
+  # vhost:
+  # html:
+  # dhparam:
+  # certs:
+  # acme:
+  postgres_data:
+    driver: local

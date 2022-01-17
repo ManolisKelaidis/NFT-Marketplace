@@ -1,0 +1,8 @@
+name: type
+in: query
+required: false
+description: The Fileter type
+schema:
+    type: string
+    default: wall
+    enum: [user,asset,bid,chat]

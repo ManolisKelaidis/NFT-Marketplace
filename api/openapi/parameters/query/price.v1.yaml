@@ -1,0 +1,7 @@
+name: price
+in: query
+required: false
+description: The Fileter price
+schema:
+    type: string
+    example: 1.5

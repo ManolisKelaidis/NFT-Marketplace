@@ -1,0 +1,7 @@
+name: unencryptedFiles
+in: query
+required: false
+description: The Fileter unencryptedFiles
+schema:
+    type: array
+    example: 

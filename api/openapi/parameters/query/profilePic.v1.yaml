@@ -1,0 +1,7 @@
+name: profilePic
+in: query
+required: false
+description: The Fileter profilePic
+schema:
+    type: string
+    example: 

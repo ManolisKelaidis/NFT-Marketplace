@@ -1,0 +1,38 @@
+summary: Create Collection
+operationId: createCollection
+x-eov-operation-handler: CollectionsController
+ 
+x-security-scopes:
+  - admin
+  - consumer
+
+
+tags: 
+  - Collection
+
+requestBody:
+  description: information that is needed for Collection
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: "../../schemas/Collection.v1.yaml"
+responses:
+  "200":
+    description: Operation Executed
+  default:
+    description: A standard error object.
+    content:
+      application/json:
+        schema:
+          properties:
+            code:
+              type: string
+              x-faker: "random.number"
+            message:
+              type: string
+              example: Sample error message
+          required:
+            - code
+          x-tags:
+            - Common

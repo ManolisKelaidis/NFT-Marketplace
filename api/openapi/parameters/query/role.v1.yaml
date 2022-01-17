@@ -1,0 +1,8 @@
+name: role
+in: query
+required: false
+description: The Fileter role
+schema:
+    type: string
+    default: consumer
+    enum: [admin,moderator,consumer]

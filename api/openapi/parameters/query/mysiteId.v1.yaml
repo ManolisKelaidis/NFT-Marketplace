@@ -1,0 +1,7 @@
+name: mysiteId
+in: query
+required: false
+description: The Fileter mysiteId
+schema:
+    type: string
+    example: 

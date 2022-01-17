@@ -1,0 +1,8 @@
+name: category
+in: query
+required: false
+description: The Fileter category
+schema:
+    type: string
+    default: 
+    enum: [Art,Photography,Games,Metaverses,Music,Domains,Memes]

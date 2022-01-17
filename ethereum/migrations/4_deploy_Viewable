@@ -1,0 +1,5 @@
+const viewable = artifacts.require("Viewable");
+
+module.exports = function(deployer) {
+  deployer.deploy(viewable);
+};

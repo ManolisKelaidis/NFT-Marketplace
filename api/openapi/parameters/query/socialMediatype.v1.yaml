@@ -1,0 +1,8 @@
+name: socialMediatype
+in: query
+required: false
+description: The Fileter socialMediatype
+schema:
+    type: string
+    default: 
+    enum: [Facebook,Instagram,Twitter]

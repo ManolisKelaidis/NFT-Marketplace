@@ -1,0 +1,75 @@
+.modal-basic {
+  .modal {
+    position: fixed !important;
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    border-radius: unset !important;
+    margin: unset !important;
+    max-width: unset !important;
+    overflow: hidden !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-dialog {
+    max-width: 400px !important;
+    -webkit-animation: scale-up-center 0.3s ease-in-out both;
+    animation: scale-up-center 0.3s ease-in-out both;
+  }
+
+  .modal__close {
+    position: unset !important;
+    top: unset !important;
+    right: unset !important;
+  }
+
+  .sign__title {
+    .container {
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  .modal-content {
+    border-radius: 16px !important;
+    background-color: #16151a !important;
+  }
+
+  @-webkit-keyframes scale-up-center {
+    0% {
+      -webkit-transform: scale(0.2);
+      transform: scale(0.2);
+    }
+    100% {
+      -webkit-transform: scale(1);
+      transform: scale(1);
+    }
+  }
+
+  @keyframes scale-up-center {
+    0% {
+      -webkit-transform: scale(0.2);
+      transform: scale(0.2);
+    }
+    100% {
+      -webkit-transform: scale(1);
+      transform: scale(1);
+    }
+  }
+}
+.file {
+  visibility: hidden;
+  position: absolute;
+}
+
+.upload__image{
+  background-color: #222227;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  height: 46px;
+  position: relative;
+  color: #fff;
+  font-size: 16px;
+  font-family: "Inter", sans-serif;
+  width: 100%;
+}

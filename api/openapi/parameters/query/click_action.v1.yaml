@@ -1,0 +1,7 @@
+name: click_action
+in: query
+required: false
+description: The Fileter click_action
+schema:
+    type: string
+    example: reminder&#x2F;rewiuhfdsl

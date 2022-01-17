@@ -1,0 +1,14 @@
+title: Update Bid with Id
+type: object
+description: An array of fields that we want to change name and value
+properties:
+  ownerId:
+    type: string
+  assetId:
+    type: string
+  bidderId:
+    type: string
+  price:
+    type: number
+  date:
+    type: string

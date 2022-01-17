@@ -1,0 +1,39 @@
+summary: Get all Notifications
+operationId: retrieveNotifications
+x-eov-operation-handler: NotificationsController
+
+x-security-scopes:
+  - consumer
+  - admin
+
+
+tags:
+  - Notification
+
+parameters:
+  - $ref: "../../parameters/query/title.v1.yaml"
+  - $ref: "../../parameters/query/body.v1.yaml"
+  - $ref: "../../parameters/query/click_action.v1.yaml"
+  - $ref: "../../parameters/query/type.v1.yaml"
+  - $ref: "../../parameters/query/status.v1.yaml"
+
+
+responses:
+  "200":
+    description: Operation Executed
+  default:
+    description: A standard error object.
+    content:
+      application/json:
+        schema:
+          properties:
+            code:
+              type: string
+              x-faker: "random.number"
+            message:
+              type: string
+              example: Sample error message
+          required:
+            - code
+          x-tags:
+            - Common

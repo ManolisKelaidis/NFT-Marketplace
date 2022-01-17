@@ -1,0 +1,6 @@
+name: levelId
+in: path
+required: true
+description: The Id of the level
+schema:
+  $ref: ./id.v1.yaml

@@ -1,0 +1,7 @@
+name: skip
+in: query
+description: How many items should be skipped before returnig the required amount
+required: false
+schema:
+  type: integer
+  format: int32

@@ -1,0 +1,7 @@
+name: instagramId
+in: query
+required: false
+description: The Fileter instagramId
+schema:
+    type: string
+    example: 

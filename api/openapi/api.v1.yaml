@@ -1,0 +1,311 @@
+openapi: 3.0.2
+
+info:
+  version: 0.1.0
+  title: NFT Gallery API
+  description: API serving the NFT Gallery Platform
+
+x-autogen:
+  database: 
+    type: mongo
+    name: domi
+  filesUpload: true
+  pushNotifications: true
+  emailSending: true
+  users:
+    emailVerification: true
+    phoneVerification: true
+    passwordRecoveryByEmail: true
+  services:
+    storage:
+      providers:
+        local:
+          default: true
+        s3:
+          configuration:
+            awskey:
+              hidden: true
+            zone: eu-central-1
+    auth:
+      name: AuthService
+      template: auth/index.tpl
+      providers:
+        local:
+          template: auth/localProvider.tpl
+        ethereum:
+          default: true
+          template: auth/ethereumProvider.tpl
+    email:
+      providers:
+        ses:
+          default: true
+          configuration:
+            awskey:
+              hidden: true
+            zone: eu-central-1
+        gmail:
+          configuration:
+            username:
+              hidden: true
+            password:
+              hidden: true
+  profiles:
+    roles:
+      - admin
+      - consumer
+    types:
+      - standard
+    default: standard
+
+  auth:
+    login: true
+    status:
+      default: notactivated
+      enum:
+        - active
+        - notactivated
+        - notverified
+        - deleted
+        - blocked
+        - invited
+        - suspended
+    roles:
+      consumer:
+        default: true
+        levels:
+          - anonymous:
+            verification: none
+          - none:
+            level: 0
+            status: active
+            verification:
+              - email:
+                provider: ses
+                template: email.tpl
+          - bronze:
+            level: 1
+            verification:
+              - phone:
+                provider: twilio
+                template: sms.tpl
+                configuration:
+                  pinLength: 6
+          - silver:
+            level: 2
+            verification:
+              - id:
+                service: idcert
+                provider: someone
+                template: something.tpl
+              - selfie:
+                provider: internal
+                template: something.tpl
+          - gold:
+            level: 3
+            verification:
+              - bank:
+                service: idcert
+                provider: crif
+                template: something.tpl
+          - diamond:
+            level: 4
+            verification:
+              - videocall:
+                provider: infocert
+                template: something.tpl
+      moderator: true
+      admin: true
+    passwordRecovery:
+      - email: true
+      - mobile: false
+
+security:
+  - bearerAuth: []
+
+servers:
+  - url: "{protocol}://{host}:{port}"
+    description:
+      Local Mocks (e.g. http://localhost:4010) and Local Dev Server (e.g. http://localhost:3000/v1)
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+        description: Protocol of the URL.
+      host:
+        enum:
+          - api-dev.domi.house
+          - api.domi.house
+          - localhost
+        default: localhost
+        description: Host of the URL
+      port:
+        enum:
+          - ""
+          - "4010"
+          - "3000"
+        default: "3000"
+        description: Port of the URL
+components:  
+  schemas:
+    User:
+      $ref: "./schemas/User.v1.yaml"
+    Asset:
+      $ref: "./schemas/Asset.v1.yaml"
+    Collection:
+      $ref: "./schemas/Collection.v1.yaml"
+    Bid:
+      $ref: "./schemas/Bid.v1.yaml"
+    Notification:
+      $ref: "./schemas/Notification.v1.yaml"
+    Certification:
+      $ref: "./schemas/Certification.v1.yaml"
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Authentication token
+
+
+
+
+
+
+
+
+
+
+
+
+paths:
+  /v1/auth/login:
+    post:
+      $ref: paths/auth/loginUser.v1.yaml  # User entity auto-generated paths
+  /v1/user:
+  
+    post:
+      $ref: paths/users/createUser.v1.yaml
+  /v1/users:
+    parameters:
+      - $ref: parameters/query/limit.v1.yaml
+      - $ref: parameters/query/skip.v1.yaml
+    get:
+      $ref: paths/users/retrieveUsers.v1.yaml
+  /v1/users/{userId}:
+    parameters:
+      - $ref: parameters/path/userId.v1.yaml
+    get:
+      $ref: paths/users/retrieveUser.v1.yaml
+    put:
+      $ref: paths/users/updateUser.v1.yaml
+    delete:
+      $ref: paths/users/deleteUser.v1.yaml
+
+  # Asset entity auto-generated paths
+  /v1/asset:
+  
+    post:
+      $ref: paths/assets/createAsset.v1.yaml
+  /v1/assets:
+    parameters:
+      - $ref: parameters/query/limit.v1.yaml
+      - $ref: parameters/query/skip.v1.yaml
+    get:
+      $ref: paths/assets/retrieveAssets.v1.yaml
+  /v1/assets/{assetId}:
+    parameters:
+      - $ref: parameters/path/assetId.v1.yaml
+    get:
+      $ref: paths/assets/retrieveAsset.v1.yaml
+    put:
+      $ref: paths/assets/updateAsset.v1.yaml
+    delete:
+      $ref: paths/assets/deleteAsset.v1.yaml
+
+  # Collection entity auto-generated paths
+  /v1/collection:
+  
+    post:
+      $ref: paths/collections/createCollection.v1.yaml
+  /v1/collections:
+    parameters:
+      - $ref: parameters/query/limit.v1.yaml
+      - $ref: parameters/query/skip.v1.yaml
+    get:
+      $ref: paths/collections/retrieveCollections.v1.yaml
+  /v1/collections/{collectionId}:
+    parameters:
+      - $ref: parameters/path/collectionId.v1.yaml
+    get:
+      $ref: paths/collections/retrieveCollection.v1.yaml
+    put:
+      $ref: paths/collections/updateCollection.v1.yaml
+    delete:
+      $ref: paths/collections/deleteCollection.v1.yaml
+
+  # Bid entity auto-generated paths
+  /v1/bid:
+  
+    post:
+      $ref: paths/bids/createBid.v1.yaml
+  /v1/bids:
+    parameters:
+      - $ref: parameters/query/limit.v1.yaml
+      - $ref: parameters/query/skip.v1.yaml
+    get:
+      $ref: paths/bids/retrieveBids.v1.yaml
+  /v1/bids/{bidId}:
+    parameters:
+      - $ref: parameters/path/bidId.v1.yaml
+    get:
+      $ref: paths/bids/retrieveBid.v1.yaml
+    put:
+      $ref: paths/bids/updateBid.v1.yaml
+    delete:
+      $ref: paths/bids/deleteBid.v1.yaml
+
+  # Notification entity auto-generated paths
+  /v1/notification:
+  
+    post:
+      $ref: paths/notifications/createNotification.v1.yaml
+  /v1/notifications:
+    parameters:
+      - $ref: parameters/query/limit.v1.yaml
+      - $ref: parameters/query/skip.v1.yaml
+    get:
+      $ref: paths/notifications/retrieveNotifications.v1.yaml
+  /v1/notifications/{notificationId}:
+    parameters:
+      - $ref: parameters/path/notificationId.v1.yaml
+    get:
+      $ref: paths/notifications/retrieveNotification.v1.yaml
+    put:
+      $ref: paths/notifications/updateNotification.v1.yaml
+    delete:
+      $ref: paths/notifications/deleteNotification.v1.yaml
+
+  # Certification entity auto-generated paths
+  /v1/certification:
+  
+    post:
+      $ref: paths/certifications/createCertification.v1.yaml
+  /v1/certifications:
+    parameters:
+      - $ref: parameters/query/limit.v1.yaml
+      - $ref: parameters/query/skip.v1.yaml
+    get:
+      $ref: paths/certifications/retrieveCertifications.v1.yaml
+  /v1/certifications/{certificationId}:
+    parameters:
+      - $ref: parameters/path/certificationId.v1.yaml
+    get:
+      $ref: paths/certifications/retrieveCertification.v1.yaml
+    put:
+      $ref: paths/certifications/updateCertification.v1.yaml
+    delete:
+      $ref: paths/certifications/deleteCertification.v1.yaml
+

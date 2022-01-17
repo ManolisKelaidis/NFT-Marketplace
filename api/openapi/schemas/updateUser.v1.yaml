@@ -1,0 +1,54 @@
+title: Update User with Id
+type: object
+description: An array of fields that we want to change name and value
+properties:
+  firstName:
+    type: string
+  lastName:
+    type: string
+  description:
+    type: string
+  username:
+    type: string
+  email:
+    type: string
+  facebookId:
+    type: string
+  instagramId:
+    type: string
+  twitterId:
+    type: string
+  mysiteId:
+    type: string
+  followers:
+    type: string
+  totalEthereum:
+    type: string
+  status:
+    type: string
+    default: active
+    enum:
+      - active
+      - notactivated
+      - notverified
+      - deleted
+      - blocked
+      - invited
+      - suspended
+  level:
+    type: string
+    default: anonymous
+    enum:
+      - anonymous
+      - none
+      - bronze
+      - silver
+      - gold
+      - diamond
+  role:
+    type: string
+    default: consumer
+    enum:
+      - admin
+      - moderator
+      - consumer

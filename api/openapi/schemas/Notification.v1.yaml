@@ -1,0 +1,58 @@
+title: Notification
+type: object
+description: A single Notification received by a user
+x-autogen:
+  apipaths: true
+  mongo: true
+  ownership: true
+  security:
+    create:
+      - consumer
+      - admin
+    update:
+      - consumer
+      - admin
+    delete:
+      - consumer
+      - admin
+    retrieve:
+      - consumer
+      - admin
+    retrieves:
+      - consumer
+      - admin
+properties:
+  title:
+    type: string
+    description: A possible title (doesn't seem it is needed but better to have it)
+    example: A possible title
+  body:
+    type: string
+    description: Text body of the Post
+    example: "Something interesting to others"
+  click_action:
+    type: string
+    description: In App click_action
+    example: reminder/rewiuhfdsl
+  type:
+    type: string
+    description: Notification type 
+    default: wall
+    enum:
+      - user
+      - asset
+      - bid
+      - chat
+  status:
+    type: string
+    description: Notification status
+    default: new
+    enum:
+      - new
+      - hidden
+      - read
+      - deleted
+required:
+  - title
+  - body
+  - status

@@ -1,0 +1,7 @@
+name: intagramId
+in: query
+required: false
+description: The Fileter intagramId
+schema:
+    type: string
+    example: 

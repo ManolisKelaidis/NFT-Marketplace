@@ -1,0 +1,44 @@
+title: Bid
+type: object
+description: Nft Gallery User Bid for an Asset
+x-autogen:
+#  plural: Userz
+  openapi: true
+  ownership: true
+  mongo: true
+  security:
+    create: 
+      - admin
+      - consumer
+    update: 
+      - admin
+      - consumer
+    delete: 
+      - admin
+      - consumer
+    retrieve:
+      - admin
+      - consumer
+    retrieves: 
+      - admin
+      - consumer
+  # crud:
+  #   - create
+  #   - retrieve
+  #   - retrieves
+properties:
+  ownerId:
+    type: string
+  assetId:
+    type: string
+  bidderId:
+    type: string
+  price:
+    type: number
+  date:
+    type: string
+required:
+  - assetId
+  - bidderId
+  - price
+  - date

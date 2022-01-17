@@ -1,0 +1,48 @@
+$primary: #6164ff !default;
+$secondary: #222227 !default;
+$error: #de2c2c !default;
+
+$white: #ffffff !default;
+$black: #000000 !default;
+$pink: #e83e8c !default;
+$red: #fc2b5c !default;
+$green: #28a745 !default;
+$cyan: #17a2b8 !default;
+$blue: #006ada !default;
+$orange: #ff8200 !default;
+$yellow: #c9c804 !default;
+
+$gray-light: #dde3ec !default;
+$gray-light-400: #bdbdbd !default;
+$gray-medium: #afafaf !default;
+$gray-dark: #646464 !default;
+
+$blue-light: #4795e9 !default;
+$blue-dark-400: #6c7a8d !default;
+$blue-dark-500: #364150 !default;
+$blue-dark-600: #2b3643 !default;
+
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "error": $error,
+  "white": $white,
+  "black": $black,
+  "pink": $pink,
+  "red": $red,
+  "green": $green,
+  "cyan": $cyan,
+  "blue": $blue,
+  "orange": $orange,
+  "yellow": $yellow,
+  "gray-light": $gray-light,
+  "gray-light-400": $gray-light-400,
+  "gray-medium": $gray-medium,
+  "gray-dark": $gray-dark,
+  "blue-light": $blue-light,
+  "blue-dark-400": $blue-dark-400,
+  "blue-dark-500": $blue-dark-500,
+  "blue-dark-600": $blue-dark-600,
+) !default;
+
+// $enable-responsive-font-sizes: true !default;

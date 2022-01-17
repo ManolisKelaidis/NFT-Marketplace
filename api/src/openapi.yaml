@@ -1,0 +1,2800 @@
+openapi: 3.0.2
+info:
+  version: 0.1.0
+  title: NFT Gallery API
+  description: API serving the NFT Gallery Platform
+x-autogen:
+  database:
+    type: mongo
+    name: domi
+  filesUpload: true
+  pushNotifications: true
+  emailSending: true
+  users:
+    emailVerification: true
+    phoneVerification: true
+    passwordRecoveryByEmail: true
+  services:
+    storage:
+      providers:
+        local:
+          default: true
+        s3:
+          configuration:
+            awskey:
+              hidden: true
+            zone: eu-central-1
+    auth:
+      name: AuthService
+      template: auth/index.tpl
+      providers:
+        local:
+          template: auth/localProvider.tpl
+        ethereum:
+          default: true
+          template: auth/ethereumProvider.tpl
+    email:
+      providers:
+        ses:
+          default: true
+          configuration:
+            awskey:
+              hidden: true
+            zone: eu-central-1
+        gmail:
+          configuration:
+            username:
+              hidden: true
+            password:
+              hidden: true
+  profiles:
+    roles:
+      - admin
+      - consumer
+    types:
+      - standard
+    default: standard
+  auth:
+    login: true
+    status:
+      default: notactivated
+      enum:
+        - active
+        - notactivated
+        - notverified
+        - deleted
+        - blocked
+        - invited
+        - suspended
+    roles:
+      consumer:
+        default: true
+        levels:
+          - anonymous: null
+            verification: none
+          - none: null
+            level: 0
+            status: active
+            verification:
+              - email: null
+                provider: ses
+                template: email.tpl
+          - bronze: null
+            level: 1
+            verification:
+              - phone: null
+                provider: twilio
+                template: sms.tpl
+                configuration:
+                  pinLength: 6
+          - silver: null
+            level: 2
+            verification:
+              - id: null
+                service: idcert
+                provider: someone
+                template: something.tpl
+              - selfie: null
+                provider: internal
+                template: something.tpl
+          - gold: null
+            level: 3
+            verification:
+              - bank: null
+                service: idcert
+                provider: crif
+                template: something.tpl
+          - diamond: null
+            level: 4
+            verification:
+              - videocall: null
+                provider: infocert
+                template: something.tpl
+      moderator: true
+      admin: true
+    passwordRecovery:
+      - email: true
+      - mobile: false
+security:
+  - bearerAuth: []
+servers:
+  - url: '{protocol}://{host}:{port}'
+    description: 'Local Mocks (e.g. http://localhost:4010) and Local Dev Server (e.g. http://localhost:3000/v1)'
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+        description: Protocol of the URL.
+      host:
+        enum:
+          - api-dev.domi.house
+          - api.domi.house
+          - localhost
+        default: localhost
+        description: Host of the URL
+      port:
+        enum:
+          - ''
+          - '4010'
+          - '3000'
+        default: '3000'
+        description: Port of the URL
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      description: Nft Gallery Platform User
+      x-autogen:
+        openapi: true
+        mongo: true
+        security:
+          create: false
+          update:
+            - admin
+            - consumer
+          delete:
+            - admin
+          retrieve:
+            - admin
+            - consumer
+          retrieves:
+            - admin
+            - consumer
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        description:
+          type: string
+        username:
+          type: string
+        email:
+          x-autogen:
+            index: unique
+          type: string
+        password:
+          type: string
+        facebookId:
+          type: string
+        instagramId:
+          type: string
+        twitterId:
+          type: string
+        mysiteId:
+          type: string
+        followers:
+          type: string
+        totalEthereum:
+          type: string
+        status:
+          x-autogen:
+            crud:
+              create:
+                hidden: true
+          type: string
+          default: active
+          enum:
+            - active
+            - notactivated
+            - notverified
+            - deleted
+            - blocked
+            - invited
+            - suspended
+        level:
+          x-autogen:
+            crud:
+              create:
+                hidden: true
+          type: string
+          default: anonymous
+          enum:
+            - anonymous
+            - none
+            - bronze
+            - silver
+            - gold
+            - diamond
+        role:
+          type: string
+          enum:
+            - admin
+            - moderator
+            - consumer
+          default: consumer
+      required:
+        - username
+        - email
+        - password
+    Asset:
+      title: Asset
+      type: object
+      description: 'Nft Gallery Asset, i.e. an NFT'
+      x-autogen:
+        openapi: true
+        ownership: true
+        mongo: true
+        security:
+          create:
+            - admin
+            - consumer
+          update:
+            - admin
+            - consumer
+          delete:
+            - admin
+            - consumer
+          retrieve:
+            - admin
+            - consumer
+          retrieves:
+            - admin
+            - consumer
+      properties:
+        ownerId:
+          type: string
+        owner:
+          type: string
+        collectionId:
+          type: string
+        yearCreated:
+          type: string
+          example: 2021-07-07T10:31:21.072Z
+        description:
+          type: string
+          example: New Description
+        title:
+          type: string
+          example: New Title
+        price:
+          type: string
+          example: 1.5
+        likes:
+          type: string
+          example: 200
+          minimum: 0
+        file:
+          type: string
+          format: binary
+        royalty:
+          type: string
+          example: 5
+        properties:
+          type: string
+        saleType:
+          type: string
+          enum:
+            - PutOnSale
+            - InstantSalePrice
+            - UnlockOnePurchased
+      required:
+        - owner
+        - title
+        - description
+        - saleType
+    Collection:
+      title: Collection
+      type: object
+      description: Nft Gallery Collection of Assets
+      x-autogen:
+        openapi: true
+        ownership: true
+        mongo: true
+        security:
+          create:
+            - admin
+            - consumer
+          update:
+            - admin
+            - consumer
+          delete:
+            - admin
+            - consumer
+          retrieve:
+            - admin
+            - consumer
+          retrieves:
+            - admin
+            - consumer
+      properties:
+        ownerId:
+          type: string
+        title:
+          type: string
+        owner:
+          type: string
+        category:
+          type: string
+          enum:
+            - Art
+            - Photography
+            - Games
+            - Metaverses
+            - Music
+            - Domains
+            - Memes
+      required:
+        - title
+        - owner
+        - category
+    Bid:
+      title: Bid
+      type: object
+      description: Nft Gallery User Bid for an Asset
+      x-autogen:
+        openapi: true
+        ownership: true
+        mongo: true
+        security:
+          create:
+            - admin
+            - consumer
+          update:
+            - admin
+            - consumer
+          delete:
+            - admin
+            - consumer
+          retrieve:
+            - admin
+            - consumer
+          retrieves:
+            - admin
+            - consumer
+      properties:
+        ownerId:
+          type: string
+        assetId:
+          type: string
+        bidderId:
+          type: string
+        price:
+          type: number
+        date:
+          type: string
+      required:
+        - assetId
+        - bidderId
+        - price
+        - date
+    Notification:
+      title: Notification
+      type: object
+      description: A single Notification received by a user
+      x-autogen:
+        apipaths: true
+        mongo: true
+        ownership: true
+        security:
+          create:
+            - consumer
+            - admin
+          update:
+            - consumer
+            - admin
+          delete:
+            - consumer
+            - admin
+          retrieve:
+            - consumer
+            - admin
+          retrieves:
+            - consumer
+            - admin
+      properties:
+        title:
+          type: string
+          description: A possible title (doesn't seem it is needed but better to have it)
+          example: A possible title
+        body:
+          type: string
+          description: Text body of the Post
+          example: Something interesting to others
+        click_action:
+          type: string
+          description: In App click_action
+          example: reminder/rewiuhfdsl
+        type:
+          type: string
+          description: Notification type
+          default: wall
+          enum:
+            - user
+            - asset
+            - bid
+            - chat
+        status:
+          type: string
+          description: Notification status
+          default: new
+          enum:
+            - new
+            - hidden
+            - read
+            - deleted
+      required:
+        - title
+        - body
+        - status
+    Certification:
+      title: Certification
+      type: object
+      description: 'Nft Gallery Certification, i.e. an NFT'
+      x-autogen:
+        openapi: true
+        ownership: true
+        mongo: true
+        security:
+          create:
+            - admin
+            - consumer
+          update:
+            - admin
+            - consumer
+          delete:
+            - admin
+            - consumer
+          retrieve:
+            - admin
+            - consumer
+          retrieves:
+            - admin
+            - consumer
+      properties:
+        ownerId:
+          type: string
+        owner:
+          type: string
+        collectionId:
+          type: string
+        yearCreated:
+          type: string
+          example: 2021-07-07T10:31:21.072Z
+        description:
+          type: string
+          example: New Description
+        title:
+          type: string
+          example: New Title
+        price:
+          type: string
+          example: 1.5
+        likes:
+          type: string
+          example: 200
+          minimum: 0
+        unencryptedFiles:
+          type: array
+          items:
+            type: string
+            format: binary
+        encryptedFiles:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+              content:
+                type: string
+        royalty:
+          type: string
+          example: 5
+        properties:
+          type: string
+        saleType:
+          type: string
+          enum:
+            - PutOnSale
+            - InstantSalePrice
+            - UnlockOnePurchased
+      required:
+        - owner
+        - title
+        - description
+        - saleType
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Authentication token
+paths:
+  /v1/auth/login:
+    post:
+      summary: Login user
+      operationId: login
+      x-eov-operation-handler: AuthController
+      tags:
+        - Auth
+      security: []
+      requestBody:
+        description: 'Parameters (username, email, password, pin) needed to login'
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  example: some@one.com
+                  type: string
+                password:
+                  example: klgfjdgk
+                  type: string
+                username:
+                  example: someone
+                  type: string
+                pin:
+                  example: '876543'
+                  type: string
+      responses:
+        '200':
+          description: Login Executed
+  /v1/user:
+    post:
+      summary: Create User
+      operationId: createUser
+      x-eov-operation-handler: UsersController
+      security: []
+      tags:
+        - User
+      requestBody:
+        description: information that is needed for User
+        required: true
+        content:
+          application/json:
+            schema:
+              title: User
+              type: object
+              description: Nft Gallery Platform User
+              x-autogen:
+                openapi: true
+                mongo: true
+                security:
+                  create: false
+                  update:
+                    - admin
+                    - consumer
+                  delete:
+                    - admin
+                  retrieve:
+                    - admin
+                    - consumer
+                  retrieves:
+                    - admin
+                    - consumer
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                description:
+                  type: string
+                username:
+                  type: string
+                email:
+                  x-autogen:
+                    index: unique
+                  type: string
+                password:
+                  type: string
+                facebookId:
+                  type: string
+                instagramId:
+                  type: string
+                twitterId:
+                  type: string
+                mysiteId:
+                  type: string
+                followers:
+                  type: string
+                totalEthereum:
+                  type: string
+                status:
+                  x-autogen:
+                    crud:
+                      create:
+                        hidden: true
+                  type: string
+                  default: active
+                  enum:
+                    - active
+                    - notactivated
+                    - notverified
+                    - deleted
+                    - blocked
+                    - invited
+                    - suspended
+                level:
+                  x-autogen:
+                    crud:
+                      create:
+                        hidden: true
+                  type: string
+                  default: anonymous
+                  enum:
+                    - anonymous
+                    - none
+                    - bronze
+                    - silver
+                    - gold
+                    - diamond
+                role:
+                  type: string
+                  enum:
+                    - admin
+                    - moderator
+                    - consumer
+                  default: consumer
+              required:
+                - username
+                - email
+                - password
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  /v1/users:
+    parameters:
+      - name: limit
+        in: query
+        description: How many items to return at one time (max 100)
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: skip
+        in: query
+        description: How many items should be skipped before returnig the required amount
+        required: false
+        schema:
+          type: integer
+          format: int32
+    get:
+      summary: Get all Users
+      operationId: retrieveUsers
+      x-eov-operation-handler: UsersController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - User
+      parameters:
+        - name: firstName
+          in: query
+          required: false
+          description: The Fileter firstName
+          schema:
+            type: string
+            example: null
+        - name: lastName
+          in: query
+          required: false
+          description: The Fileter lastName
+          schema:
+            type: string
+            example: null
+        - name: description
+          in: query
+          required: false
+          description: The Fileter description
+          schema:
+            type: string
+            example: New Description
+        - name: username
+          in: query
+          required: false
+          description: The Fileter username
+          schema:
+            type: string
+            example: null
+        - name: email
+          in: query
+          required: false
+          description: The Fileter email
+          schema:
+            type: string
+            example: null
+        - name: facebookId
+          in: query
+          required: false
+          description: The Fileter facebookId
+          schema:
+            type: string
+            example: null
+        - name: instagramId
+          in: query
+          required: false
+          description: The Fileter instagramId
+          schema:
+            type: string
+            example: null
+        - name: twitterId
+          in: query
+          required: false
+          description: The Fileter twitterId
+          schema:
+            type: string
+            example: null
+        - name: mysiteId
+          in: query
+          required: false
+          description: The Fileter mysiteId
+          schema:
+            type: string
+            example: null
+        - name: followers
+          in: query
+          required: false
+          description: The Fileter followers
+          schema:
+            type: string
+            example: null
+        - name: totalEthereum
+          in: query
+          required: false
+          description: The Fileter totalEthereum
+          schema:
+            type: string
+            example: null
+        - name: status
+          in: query
+          required: false
+          description: The Fileter status
+          schema:
+            type: string
+            default: new
+            enum:
+              - new
+              - hidden
+              - read
+              - deleted
+        - name: level
+          in: query
+          required: false
+          description: The Fileter level
+          schema:
+            type: string
+            default: anonymous
+            enum:
+              - anonymous
+              - none
+              - bronze
+              - silver
+              - gold
+              - diamond
+        - name: role
+          in: query
+          required: false
+          description: The Fileter role
+          schema:
+            type: string
+            default: consumer
+            enum:
+              - admin
+              - moderator
+              - consumer
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  '/v1/users/{userId}':
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        description: The Id of the User
+        schema:
+          description: Id of the entity
+          type: string
+          format: not-empty-string
+          example: 60758e80d59c357138d01af6
+    get:
+      summary: Get User with Id
+      operationId: retrieveUser
+      x-eov-operation-handler: UsersController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The Id of the User
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    put:
+      summary: Update User with Id
+      operationId: updateUser
+      x-eov-operation-handler: UsersController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The Id of the User
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      requestBody:
+        description: information that is needed for User
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Update User with Id
+              type: object
+              description: An array of fields that we want to change name and value
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                description:
+                  type: string
+                username:
+                  type: string
+                email:
+                  type: string
+                facebookId:
+                  type: string
+                instagramId:
+                  type: string
+                twitterId:
+                  type: string
+                mysiteId:
+                  type: string
+                followers:
+                  type: string
+                totalEthereum:
+                  type: string
+                status:
+                  type: string
+                  default: active
+                  enum:
+                    - active
+                    - notactivated
+                    - notverified
+                    - deleted
+                    - blocked
+                    - invited
+                    - suspended
+                level:
+                  type: string
+                  default: anonymous
+                  enum:
+                    - anonymous
+                    - none
+                    - bronze
+                    - silver
+                    - gold
+                    - diamond
+                role:
+                  type: string
+                  default: consumer
+                  enum:
+                    - admin
+                    - moderator
+                    - consumer
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    delete:
+      summary: Delete User with Id
+      operationId: deleteUser
+      x-eov-operation-handler: UsersController
+      x-security-scopes:
+        - admin
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The Id of the User
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  /v1/asset:
+    post:
+      summary: Create Asset
+      operationId: createAsset
+      x-eov-operation-handler: AssetsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Asset
+      requestBody:
+        description: information that is needed for Asset
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: Asset
+              type: object
+              description: 'Nft Gallery Asset, i.e. an NFT'
+              x-autogen:
+                openapi: true
+                ownership: true
+                mongo: true
+                security:
+                  create:
+                    - admin
+                    - consumer
+                  update:
+                    - admin
+                    - consumer
+                  delete:
+                    - admin
+                    - consumer
+                  retrieve:
+                    - admin
+                    - consumer
+                  retrieves:
+                    - admin
+                    - consumer
+              properties:
+                ownerId:
+                  type: string
+                owner:
+                  type: string
+                collectionId:
+                  type: string
+                yearCreated:
+                  type: string
+                  example: 2021-07-07T10:31:21.072Z
+                description:
+                  type: string
+                  example: New Description
+                title:
+                  type: string
+                  example: New Title
+                price:
+                  type: string
+                  example: 1.5
+                likes:
+                  type: string
+                  example: 200
+                  minimum: 0
+                file:
+                  type: string
+                  format: binary
+                royalty:
+                  type: string
+                  example: 5
+                properties:
+                  type: string
+                saleType:
+                  type: string
+                  enum:
+                    - PutOnSale
+                    - InstantSalePrice
+                    - UnlockOnePurchased
+              required:
+                - owner
+                - title
+                - description
+                - saleType
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  /v1/assets:
+    parameters:
+      - name: limit
+        in: query
+        description: How many items to return at one time (max 100)
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: skip
+        in: query
+        description: How many items should be skipped before returnig the required amount
+        required: false
+        schema:
+          type: integer
+          format: int32
+    get:
+      summary: Get all Assets
+      operationId: retrieveAssets
+      x-eov-operation-handler: AssetsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Asset
+      parameters:
+        - name: ownerId
+          in: query
+          required: false
+          description: The Fileter ownerId
+          schema:
+            type: string
+            example: null
+        - name: owner
+          in: query
+          required: false
+          description: The Fileter owner
+          schema:
+            type: string
+            example: null
+        - name: collectionId
+          in: query
+          required: false
+          description: The Fileter collectionId
+          schema:
+            type: string
+            example: null
+        - name: yearCreated
+          in: query
+          required: false
+          description: The Fileter yearCreated
+          schema:
+            type: string
+            example: 'Wed Jul 07 2021 12:31:21 GMT+0200 (Central European Summer Time)'
+        - name: description
+          in: query
+          required: false
+          description: The Fileter description
+          schema:
+            type: string
+            example: New Description
+        - name: title
+          in: query
+          required: false
+          description: The Fileter title
+          schema:
+            type: string
+            example: New Title
+        - name: price
+          in: query
+          required: false
+          description: The Fileter price
+          schema:
+            type: string
+            example: 1.5
+        - name: likes
+          in: query
+          required: false
+          description: The Fileter likes
+          schema:
+            type: string
+            example: 200
+        - name: file
+          in: query
+          required: false
+          description: The Fileter file
+          schema:
+            type: string
+            example: null
+        - name: royalty
+          in: query
+          required: false
+          description: The Fileter royalty
+          schema:
+            type: string
+            example: 5
+        - name: properties
+          in: query
+          required: false
+          description: The Fileter properties
+          schema:
+            type: string
+            example: null
+        - name: saleType
+          in: query
+          required: false
+          description: The Fileter saleType
+          schema:
+            type: string
+            default: null
+            enum:
+              - PutOnSale
+              - InstantSalePrice
+              - UnlockOnePurchased
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  '/v1/assets/{assetId}':
+    parameters:
+      - name: assetId
+        in: path
+        required: true
+        description: The Id of the Asset
+        schema:
+          description: Id of the entity
+          type: string
+          format: not-empty-string
+          example: 60758e80d59c357138d01af6
+    get:
+      summary: Get Asset with Id
+      operationId: retrieveAsset
+      x-eov-operation-handler: AssetsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Asset
+      parameters:
+        - name: assetId
+          in: path
+          required: true
+          description: The Id of the Asset
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    put:
+      summary: Update Asset with Id
+      operationId: updateAsset
+      x-eov-operation-handler: AssetsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Asset
+      parameters:
+        - name: assetId
+          in: path
+          required: true
+          description: The Id of the Asset
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      requestBody:
+        description: information that is needed for Asset
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: Update Asset with Id
+              type: object
+              description: An array of fields that we want to change name and value
+              properties:
+                ownerId:
+                  type: string
+                owner:
+                  type: string
+                collectionId:
+                  type: string
+                yearCreated:
+                  type: string
+                  example: 'Wed Jul 07 2021 12:31:21 GMT+0200 (Central European Summer Time)'
+                description:
+                  type: string
+                  example: New Description
+                title:
+                  type: string
+                  example: New Title
+                price:
+                  type: string
+                  example: 1.5
+                likes:
+                  type: string
+                  example: 200
+                file:
+                  type: string
+                  format: binary
+                royalty:
+                  type: string
+                  example: 5
+                properties:
+                  type: string
+                saleType:
+                  type: string
+                  enum:
+                    - PutOnSale
+                    - InstantSalePrice
+                    - UnlockOnePurchased
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    delete:
+      summary: Delete Asset with Id
+      operationId: deleteAsset
+      x-eov-operation-handler: AssetsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Asset
+      parameters:
+        - name: assetId
+          in: path
+          required: true
+          description: The Id of the Asset
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  /v1/collection:
+    post:
+      summary: Create Collection
+      operationId: createCollection
+      x-eov-operation-handler: CollectionsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Collection
+      requestBody:
+        description: information that is needed for Collection
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Collection
+              type: object
+              description: Nft Gallery Collection of Assets
+              x-autogen:
+                openapi: true
+                ownership: true
+                mongo: true
+                security:
+                  create:
+                    - admin
+                    - consumer
+                  update:
+                    - admin
+                    - consumer
+                  delete:
+                    - admin
+                    - consumer
+                  retrieve:
+                    - admin
+                    - consumer
+                  retrieves:
+                    - admin
+                    - consumer
+              properties:
+                ownerId:
+                  type: string
+                title:
+                  type: string
+                owner:
+                  type: string
+                category:
+                  type: string
+                  enum:
+                    - Art
+                    - Photography
+                    - Games
+                    - Metaverses
+                    - Music
+                    - Domains
+                    - Memes
+              required:
+                - title
+                - owner
+                - category
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  /v1/collections:
+    parameters:
+      - name: limit
+        in: query
+        description: How many items to return at one time (max 100)
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: skip
+        in: query
+        description: How many items should be skipped before returnig the required amount
+        required: false
+        schema:
+          type: integer
+          format: int32
+    get:
+      summary: Get all Collections
+      operationId: retrieveCollections
+      x-eov-operation-handler: CollectionsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Collection
+      parameters:
+        - name: ownerId
+          in: query
+          required: false
+          description: The Fileter ownerId
+          schema:
+            type: string
+            example: null
+        - name: title
+          in: query
+          required: false
+          description: The Fileter title
+          schema:
+            type: string
+            example: New Title
+        - name: owner
+          in: query
+          required: false
+          description: The Fileter owner
+          schema:
+            type: string
+            example: null
+        - name: category
+          in: query
+          required: false
+          description: The Fileter category
+          schema:
+            type: string
+            default: null
+            enum:
+              - Art
+              - Photography
+              - Games
+              - Metaverses
+              - Music
+              - Domains
+              - Memes
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  '/v1/collections/{collectionId}':
+    parameters:
+      - name: collectionId
+        in: path
+        required: true
+        description: The Id of the Collection
+        schema:
+          description: Id of the entity
+          type: string
+          format: not-empty-string
+          example: 60758e80d59c357138d01af6
+    get:
+      summary: Get Collection with Id
+      operationId: retrieveCollection
+      x-eov-operation-handler: CollectionsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Collection
+      parameters:
+        - name: collectionId
+          in: path
+          required: true
+          description: The Id of the Collection
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    put:
+      summary: Update Collection with Id
+      operationId: updateCollection
+      x-eov-operation-handler: CollectionsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Collection
+      parameters:
+        - name: collectionId
+          in: path
+          required: true
+          description: The Id of the Collection
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      requestBody:
+        description: information that is needed for Collection
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Update Collection with Id
+              type: object
+              description: An array of fields that we want to change name and value
+              properties:
+                ownerId:
+                  type: string
+                title:
+                  type: string
+                owner:
+                  type: string
+                category:
+                  type: string
+                  enum:
+                    - Art
+                    - Photography
+                    - Games
+                    - Metaverses
+                    - Music
+                    - Domains
+                    - Memes
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    delete:
+      summary: Delete Collection with Id
+      operationId: deleteCollection
+      x-eov-operation-handler: CollectionsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Collection
+      parameters:
+        - name: collectionId
+          in: path
+          required: true
+          description: The Id of the Collection
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  /v1/bid:
+    post:
+      summary: Create Bid
+      operationId: createBid
+      x-eov-operation-handler: BidsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Bid
+      requestBody:
+        description: information that is needed for Bid
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Bid
+              type: object
+              description: Nft Gallery User Bid for an Asset
+              x-autogen:
+                openapi: true
+                ownership: true
+                mongo: true
+                security:
+                  create:
+                    - admin
+                    - consumer
+                  update:
+                    - admin
+                    - consumer
+                  delete:
+                    - admin
+                    - consumer
+                  retrieve:
+                    - admin
+                    - consumer
+                  retrieves:
+                    - admin
+                    - consumer
+              properties:
+                ownerId:
+                  type: string
+                assetId:
+                  type: string
+                bidderId:
+                  type: string
+                price:
+                  type: number
+                date:
+                  type: string
+              required:
+                - assetId
+                - bidderId
+                - price
+                - date
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  /v1/bids:
+    parameters:
+      - name: limit
+        in: query
+        description: How many items to return at one time (max 100)
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: skip
+        in: query
+        description: How many items should be skipped before returnig the required amount
+        required: false
+        schema:
+          type: integer
+          format: int32
+    get:
+      summary: Get all Bids
+      operationId: retrieveBids
+      x-eov-operation-handler: BidsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Bid
+      parameters:
+        - name: ownerId
+          in: query
+          required: false
+          description: The Fileter ownerId
+          schema:
+            type: string
+            example: null
+        - name: assetId
+          in: query
+          required: false
+          description: The Fileter assetId
+          schema:
+            type: string
+            example: null
+        - name: bidderId
+          in: query
+          required: false
+          description: The Fileter bidderId
+          schema:
+            type: string
+            example: null
+        - name: price
+          in: query
+          required: false
+          description: The Fileter price
+          schema:
+            type: string
+            example: 1.5
+        - name: date
+          in: query
+          required: false
+          description: The Fileter date
+          schema:
+            type: string
+            example: null
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  '/v1/bids/{bidId}':
+    parameters:
+      - name: bidId
+        in: path
+        required: true
+        description: The Id of the Bid
+        schema:
+          description: Id of the entity
+          type: string
+          format: not-empty-string
+          example: 60758e80d59c357138d01af6
+    get:
+      summary: Get Bid with Id
+      operationId: retrieveBid
+      x-eov-operation-handler: BidsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Bid
+      parameters:
+        - name: bidId
+          in: path
+          required: true
+          description: The Id of the Bid
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    put:
+      summary: Update Bid with Id
+      operationId: updateBid
+      x-eov-operation-handler: BidsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Bid
+      parameters:
+        - name: bidId
+          in: path
+          required: true
+          description: The Id of the Bid
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      requestBody:
+        description: information that is needed for Bid
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Update Bid with Id
+              type: object
+              description: An array of fields that we want to change name and value
+              properties:
+                ownerId:
+                  type: string
+                assetId:
+                  type: string
+                bidderId:
+                  type: string
+                price:
+                  type: number
+                date:
+                  type: string
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    delete:
+      summary: Delete Bid with Id
+      operationId: deleteBid
+      x-eov-operation-handler: BidsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Bid
+      parameters:
+        - name: bidId
+          in: path
+          required: true
+          description: The Id of the Bid
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  /v1/notification:
+    post:
+      summary: Create Notification
+      operationId: createNotification
+      x-eov-operation-handler: NotificationsController
+      x-security-scopes:
+        - consumer
+        - admin
+      tags:
+        - Notification
+      requestBody:
+        description: information that is needed for Notification
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Notification
+              type: object
+              description: A single Notification received by a user
+              x-autogen:
+                apipaths: true
+                mongo: true
+                ownership: true
+                security:
+                  create:
+                    - consumer
+                    - admin
+                  update:
+                    - consumer
+                    - admin
+                  delete:
+                    - consumer
+                    - admin
+                  retrieve:
+                    - consumer
+                    - admin
+                  retrieves:
+                    - consumer
+                    - admin
+              properties:
+                title:
+                  type: string
+                  description: A possible title (doesn't seem it is needed but better to have it)
+                  example: A possible title
+                body:
+                  type: string
+                  description: Text body of the Post
+                  example: Something interesting to others
+                click_action:
+                  type: string
+                  description: In App click_action
+                  example: reminder/rewiuhfdsl
+                type:
+                  type: string
+                  description: Notification type
+                  default: wall
+                  enum:
+                    - user
+                    - asset
+                    - bid
+                    - chat
+                status:
+                  type: string
+                  description: Notification status
+                  default: new
+                  enum:
+                    - new
+                    - hidden
+                    - read
+                    - deleted
+              required:
+                - title
+                - body
+                - status
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  /v1/notifications:
+    parameters:
+      - name: limit
+        in: query
+        description: How many items to return at one time (max 100)
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: skip
+        in: query
+        description: How many items should be skipped before returnig the required amount
+        required: false
+        schema:
+          type: integer
+          format: int32
+    get:
+      summary: Get all Notifications
+      operationId: retrieveNotifications
+      x-eov-operation-handler: NotificationsController
+      x-security-scopes:
+        - consumer
+        - admin
+      tags:
+        - Notification
+      parameters:
+        - name: title
+          in: query
+          required: false
+          description: The Fileter title
+          schema:
+            type: string
+            example: New Title
+        - name: body
+          in: query
+          required: false
+          description: The Fileter body
+          schema:
+            type: string
+            example: Something interesting to others
+        - name: click_action
+          in: query
+          required: false
+          description: The Fileter click_action
+          schema:
+            type: string
+            example: reminder&#x2F;rewiuhfdsl
+        - name: type
+          in: query
+          required: false
+          description: The Fileter type
+          schema:
+            type: string
+            default: wall
+            enum:
+              - user
+              - asset
+              - bid
+              - chat
+        - name: status
+          in: query
+          required: false
+          description: The Fileter status
+          schema:
+            type: string
+            default: new
+            enum:
+              - new
+              - hidden
+              - read
+              - deleted
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  '/v1/notifications/{notificationId}':
+    parameters:
+      - name: notificationId
+        in: path
+        required: true
+        description: The Id of the Notification
+        schema:
+          description: Id of the entity
+          type: string
+          format: not-empty-string
+          example: 60758e80d59c357138d01af6
+    get:
+      summary: Get Notification with Id
+      operationId: retrieveNotification
+      x-eov-operation-handler: NotificationsController
+      x-security-scopes:
+        - consumer
+        - admin
+      tags:
+        - Notification
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          description: The Id of the Notification
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    put:
+      summary: Update Notification with Id
+      operationId: updateNotification
+      x-eov-operation-handler: NotificationsController
+      x-security-scopes:
+        - consumer
+        - admin
+      tags:
+        - Notification
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          description: The Id of the Notification
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      requestBody:
+        description: information that is needed for Notification
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Update Notification with Id
+              type: object
+              description: An array of fields that we want to change name and value
+              properties:
+                title:
+                  type: string
+                  description: A possible title (doesn&amp;#39;t seem it is needed but better to have it)
+                  example: A possible title
+                body:
+                  type: string
+                  description: Text body of the Post
+                  example: Something interesting to others
+                click_action:
+                  type: string
+                  description: In App click_action
+                  example: reminder&amp;#x2F;rewiuhfdsl
+                type:
+                  type: string
+                  description: Notification type
+                  default: wall
+                  enum:
+                    - user
+                    - asset
+                    - bid
+                    - chat
+                status:
+                  type: string
+                  description: Notification status
+                  default: new
+                  enum:
+                    - new
+                    - hidden
+                    - read
+                    - deleted
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    delete:
+      summary: Delete Notification with Id
+      operationId: deleteNotification
+      x-eov-operation-handler: NotificationsController
+      x-security-scopes:
+        - consumer
+        - admin
+      tags:
+        - Notification
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          description: The Id of the Notification
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  /v1/certification:
+    post:
+      summary: Create Certification
+      operationId: createCertification
+      x-eov-operation-handler: CertificationsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Certification
+      requestBody:
+        description: information that is needed for Certification
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Certification
+              type: object
+              description: 'Nft Gallery Certification, i.e. an NFT'
+              x-autogen:
+                openapi: true
+                ownership: true
+                mongo: true
+                security:
+                  create:
+                    - admin
+                    - consumer
+                  update:
+                    - admin
+                    - consumer
+                  delete:
+                    - admin
+                    - consumer
+                  retrieve:
+                    - admin
+                    - consumer
+                  retrieves:
+                    - admin
+                    - consumer
+              properties:
+                ownerId:
+                  type: string
+                owner:
+                  type: string
+                collectionId:
+                  type: string
+                yearCreated:
+                  type: string
+                  example: 2021-07-07T10:31:21.072Z
+                description:
+                  type: string
+                  example: New Description
+                title:
+                  type: string
+                  example: New Title
+                price:
+                  type: string
+                  example: 1.5
+                likes:
+                  type: string
+                  example: 200
+                  minimum: 0
+                unencryptedFiles:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                encryptedFiles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      path:
+                        type: string
+                      content:
+                        type: string
+                royalty:
+                  type: string
+                  example: 5
+                properties:
+                  type: string
+                saleType:
+                  type: string
+                  enum:
+                    - PutOnSale
+                    - InstantSalePrice
+                    - UnlockOnePurchased
+              required:
+                - owner
+                - title
+                - description
+                - saleType
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  /v1/certifications:
+    parameters:
+      - name: limit
+        in: query
+        description: How many items to return at one time (max 100)
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: skip
+        in: query
+        description: How many items should be skipped before returnig the required amount
+        required: false
+        schema:
+          type: integer
+          format: int32
+    get:
+      summary: Get all Certifications
+      operationId: retrieveCertifications
+      x-eov-operation-handler: CertificationsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Certification
+      parameters:
+        - name: ownerId
+          in: query
+          required: false
+          description: The Fileter ownerId
+          schema:
+            type: string
+            example: null
+        - name: owner
+          in: query
+          required: false
+          description: The Fileter owner
+          schema:
+            type: string
+            example: null
+        - name: collectionId
+          in: query
+          required: false
+          description: The Fileter collectionId
+          schema:
+            type: string
+            example: null
+        - name: yearCreated
+          in: query
+          required: false
+          description: The Fileter yearCreated
+          schema:
+            type: string
+            example: 'Wed Jul 07 2021 12:31:21 GMT+0200 (Central European Summer Time)'
+        - name: description
+          in: query
+          required: false
+          description: The Fileter description
+          schema:
+            type: string
+            example: New Description
+        - name: title
+          in: query
+          required: false
+          description: The Fileter title
+          schema:
+            type: string
+            example: New Title
+        - name: price
+          in: query
+          required: false
+          description: The Fileter price
+          schema:
+            type: string
+            example: 1.5
+        - name: likes
+          in: query
+          required: false
+          description: The Fileter likes
+          schema:
+            type: string
+            example: 200
+        - name: unencryptedFiles
+          in: query
+          required: false
+          description: The Fileter unencryptedFiles
+          schema:
+            type: array
+            example: null
+        - name: encryptedFiles
+          in: query
+          required: false
+          description: The Fileter encryptedFiles
+          schema:
+            type: array
+            example: null
+        - name: royalty
+          in: query
+          required: false
+          description: The Fileter royalty
+          schema:
+            type: string
+            example: 5
+        - name: properties
+          in: query
+          required: false
+          description: The Fileter properties
+          schema:
+            type: string
+            example: null
+        - name: saleType
+          in: query
+          required: false
+          description: The Fileter saleType
+          schema:
+            type: string
+            default: null
+            enum:
+              - PutOnSale
+              - InstantSalePrice
+              - UnlockOnePurchased
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+  '/v1/certifications/{certificationId}':
+    parameters:
+      - name: certificationId
+        in: path
+        required: true
+        description: The Id of the Certification
+        schema:
+          description: Id of the entity
+          type: string
+          format: not-empty-string
+          example: 60758e80d59c357138d01af6
+    get:
+      summary: Get Certification with Id
+      operationId: retrieveCertification
+      x-eov-operation-handler: CertificationsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Certification
+      parameters:
+        - name: certificationId
+          in: path
+          required: true
+          description: The Id of the Certification
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    put:
+      summary: Update Certification with Id
+      operationId: updateCertification
+      x-eov-operation-handler: CertificationsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Certification
+      parameters:
+        - name: certificationId
+          in: path
+          required: true
+          description: The Id of the Certification
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      requestBody:
+        description: information that is needed for Certification
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Update Certification with Id
+              type: object
+              description: An array of fields that we want to change name and value
+              properties:
+                ownerId:
+                  type: string
+                owner:
+                  type: string
+                collectionId:
+                  type: string
+                yearCreated:
+                  type: string
+                  example: 'Wed Jul 07 2021 12:31:21 GMT+0200 (Central European Summer Time)'
+                description:
+                  type: string
+                  example: New Description
+                title:
+                  type: string
+                  example: New Title
+                price:
+                  type: string
+                  example: 1.5
+                likes:
+                  type: string
+                  example: 200
+                unencryptedFiles:
+                  type: array
+                encryptedFiles:
+                  type: array
+                royalty:
+                  type: string
+                  example: 5
+                properties:
+                  type: string
+                saleType:
+                  type: string
+                  enum:
+                    - PutOnSale
+                    - InstantSalePrice
+                    - UnlockOnePurchased
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common
+    delete:
+      summary: Delete Certification with Id
+      operationId: deleteCertification
+      x-eov-operation-handler: CertificationsController
+      x-security-scopes:
+        - admin
+        - consumer
+      tags:
+        - Certification
+      parameters:
+        - name: certificationId
+          in: path
+          required: true
+          description: The Id of the Certification
+          schema:
+            description: Id of the entity
+            type: string
+            format: not-empty-string
+            example: 60758e80d59c357138d01af6
+      responses:
+        '200':
+          description: Operation Executed
+        default:
+          description: A standard error object.
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                    x-faker: random.number
+                  message:
+                    type: string
+                    example: Sample error message
+                required:
+                  - code
+                x-tags:
+                  - Common

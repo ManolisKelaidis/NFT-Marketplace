@@ -1,0 +1,38 @@
+summary: Create Bid
+operationId: createBid
+x-eov-operation-handler: BidsController
+ 
+x-security-scopes:
+  - admin
+  - consumer
+
+
+tags: 
+  - Bid
+
+requestBody:
+  description: information that is needed for Bid
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: "../../schemas/Bid.v1.yaml"
+responses:
+  "200":
+    description: Operation Executed
+  default:
+    description: A standard error object.
+    content:
+      application/json:
+        schema:
+          properties:
+            code:
+              type: string
+              x-faker: "random.number"
+            message:
+              type: string
+              example: Sample error message
+          required:
+            - code
+          x-tags:
+            - Common

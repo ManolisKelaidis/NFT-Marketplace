@@ -1,0 +1,41 @@
+summary: Update User with Id
+operationId: updateUser
+x-eov-operation-handler: UsersController
+
+x-security-scopes:
+  - admin
+  - consumer
+
+
+tags:
+  - User
+
+parameters:
+  - $ref: "../../parameters/path/userId.v1.yaml"
+
+requestBody:
+  description: information that is needed for User
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: "../../schemas/updateUser.v1.yaml"
+responses:
+  "200":
+    description: Operation Executed
+  default:
+    description: A standard error object.
+    content:
+      application/json:
+        schema:
+          properties:
+            code:
+              type: string
+              x-faker: "random.number"
+            message:
+              type: string
+              example: Sample error message
+          required:
+            - code
+          x-tags:
+            - Common

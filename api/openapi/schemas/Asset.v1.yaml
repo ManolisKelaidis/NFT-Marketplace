@@ -1,0 +1,69 @@
+title: Asset
+type: object
+description: Nft Gallery Asset, i.e. an NFT
+x-autogen:
+  openapi: true
+  ownership: true
+  mongo: true
+  security:
+    create: 
+      - admin
+      - consumer
+    update: 
+      - admin
+      - consumer
+    delete: 
+      - admin
+      - consumer
+    retrieve: 
+      - admin
+      - consumer
+    retrieves: 
+      - admin
+      - consumer
+  # crud:
+  #   - create
+  #   - retrieve
+  #   - retrieves
+properties:
+  ownerId:
+    type: string
+  owner:
+    type: string
+  collectionId:
+    type: string
+  yearCreated:
+    type: string
+    example: 2021-07-07T10:31:21.072Z
+  description:
+    type: string
+    example: New Description
+  title:
+    type: string
+    example: New Title
+  price:
+    type: string
+    example: 1.5
+  likes:
+    type: string
+    example: 200
+    minimum: 0
+  file:
+    type: string
+    format: binary
+  royalty:
+    type: string
+    example: 5
+  properties:
+    type: string
+  saleType:
+    type: string
+    enum:
+      - PutOnSale
+      - InstantSalePrice
+      - UnlockOnePurchased
+required:
+  - owner
+  - title
+  - description
+  - saleType

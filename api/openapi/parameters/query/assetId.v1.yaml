@@ -1,0 +1,7 @@
+name: assetId
+in: query
+required: false
+description: The Fileter assetId
+schema:
+    type: string
+    example: 

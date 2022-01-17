@@ -1,0 +1,6 @@
+name: bidId
+in: path
+required: true
+description: The Id of the Bid
+schema:
+  $ref: ./id.v1.yaml

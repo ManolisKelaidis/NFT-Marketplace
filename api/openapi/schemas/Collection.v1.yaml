@@ -1,0 +1,45 @@
+title: Collection
+type: object
+description: Nft Gallery Collection of Assets
+x-autogen:
+#  plural: Userz
+  openapi: true
+  ownership: true
+  mongo: true
+  security:
+    create:
+      - admin
+      - consumer
+    update:
+      - admin
+      - consumer
+    delete:
+      - admin
+      - consumer
+    retrieve:
+      - admin
+      - consumer
+    retrieves: 
+      - admin
+      - consumer
+properties:
+  ownerId:
+    type: string
+  title:
+    type: string
+  owner:
+    type: string
+  category:
+    type: string
+    enum:
+      - Art
+      - Photography
+      - Games
+      - Metaverses
+      - Music
+      - Domains
+      - Memes
+required:
+  - title
+  - owner
+  - category

@@ -1,0 +1,6 @@
+name: collectionId
+in: path
+required: true
+description: The Id of the Collection
+schema:
+  $ref: ./id.v1.yaml

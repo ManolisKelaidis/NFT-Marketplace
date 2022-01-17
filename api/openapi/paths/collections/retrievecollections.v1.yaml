@@ -1,0 +1,38 @@
+summary: Get all Collections
+operationId: retrieveCollections
+x-eov-operation-handler: CollectionsController
+
+x-security-scopes:
+  - admin
+  - consumer
+
+
+tags:
+  - Collection
+
+parameters:
+  - $ref: "../../parameters/query/ownerId.v1.yaml"
+  - $ref: "../../parameters/query/title.v1.yaml"
+  - $ref: "../../parameters/query/owner.v1.yaml"
+  - $ref: "../../parameters/query/category.v1.yaml"
+
+
+responses:
+  "200":
+    description: Operation Executed
+  default:
+    description: A standard error object.
+    content:
+      application/json:
+        schema:
+          properties:
+            code:
+              type: string
+              x-faker: "random.number"
+            message:
+              type: string
+              example: Sample error message
+          required:
+            - code
+          x-tags:
+            - Common

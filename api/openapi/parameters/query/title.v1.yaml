@@ -1,0 +1,7 @@
+name: title
+in: query
+required: false
+description: The Fileter title
+schema:
+    type: string
+    example: New Title

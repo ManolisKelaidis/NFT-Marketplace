@@ -1,0 +1,7 @@
+name: royalty
+in: query
+required: false
+description: The Fileter royalty
+schema:
+    type: string
+    example: 5

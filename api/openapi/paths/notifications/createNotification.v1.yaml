@@ -1,0 +1,38 @@
+summary: Create Notification
+operationId: createNotification
+x-eov-operation-handler: NotificationsController
+ 
+x-security-scopes:
+  - consumer
+  - admin
+
+
+tags: 
+  - Notification
+
+requestBody:
+  description: information that is needed for Notification
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: "../../schemas/Notification.v1.yaml"
+responses:
+  "200":
+    description: Operation Executed
+  default:
+    description: A standard error object.
+    content:
+      application/json:
+        schema:
+          properties:
+            code:
+              type: string
+              x-faker: "random.number"
+            message:
+              type: string
+              example: Sample error message
+          required:
+            - code
+          x-tags:
+            - Common

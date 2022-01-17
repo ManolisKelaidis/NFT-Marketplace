@@ -1,0 +1,8 @@
+name: status
+in: query
+required: false
+description: The Fileter status
+schema:
+    type: string
+    default: new
+    enum: [new,hidden,read,deleted]

@@ -1,0 +1,8 @@
+name: saleType
+in: query
+required: false
+description: The Fileter saleType
+schema:
+    type: string
+    default: 
+    enum: [PutOnSale,InstantSalePrice,UnlockOnePurchased]

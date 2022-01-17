@@ -1,0 +1,7 @@
+name: properties
+in: query
+required: false
+description: The Fileter properties
+schema:
+    type: string
+    example: 

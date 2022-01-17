@@ -1,0 +1,7 @@
+name: socialMedia
+in: query
+required: false
+description: The Fileter socialMedia
+schema:
+    type: object
+    example: 

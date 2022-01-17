@@ -1,0 +1,4 @@
+description: Id of the entity
+type: string
+format: not-empty-string
+example: 60758e80d59c357138d01af6

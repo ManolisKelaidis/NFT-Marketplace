@@ -1,0 +1,6 @@
+name: statusId
+in: path
+required: true
+description: The Id of the status
+schema:
+  $ref: ./id.v1.yaml

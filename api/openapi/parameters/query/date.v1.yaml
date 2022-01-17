@@ -1,0 +1,7 @@
+name: date
+in: query
+required: false
+description: The Fileter date
+schema:
+    type: string
+    example: 

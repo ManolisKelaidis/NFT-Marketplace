@@ -1,0 +1,28 @@
+{
+  "name": "nft-gallery",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "docker:login": "aws ecr get-login-password --region eu-south-1 --profile leonard | docker login --username AWS --password-stdin 947264121562.dkr.ecr.eu-south-1.amazonaws.com",
+    "docker:build:gallery": "cd gallery && docker build --no-cache -t 947264121562.dkr.ecr.eu-south-1.amazonaws.com/plirio/nft-gallery:development . && cd ..",
+    "docker:push:gallery": "docker push 947264121562.dkr.ecr.eu-south-1.amazonaws.com/plirio/nft-gallery:development",
+    "ethereum:compile": "cd ethereum && npm run truffle:compile",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "openapi:publish": "swagger-cli validate api/openapi/api.v1.yaml && swagger-cli bundle api/openapi/api.v1.yaml -o public/api.v1.json --dereference && swagger-cli bundle api/openapi/api.v1.yaml -o api/src/openapi.yaml --dereference -t yaml && cp public/api.v1.json gallery/public/api.v1.json && cp public/api.v1.json console/public/api.v1.json && cp public/api.v1.json api/openapi/api.v1.json"
+  },
+  "author": "Plirio",
+  "license": "ISC",
+  "dependencies": {
+    "@react-pdf-viewer/core": "^2.4.1",
+    "@react-pdf-viewer/default-layout": "^2.7.1",
+    "dotenv": "^10.0.0",
+    "pdfjs-dist": "^2.6.347",
+    "react-dnd": "^14.0.3",
+    "react-dnd-html5-backend": "^14.0.1",
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-loading-overlay": "^1.0.1",
+    "react-tag-input": "^6.7.3",
+    "spinners-react": "^1.0.4"
+  }
+}

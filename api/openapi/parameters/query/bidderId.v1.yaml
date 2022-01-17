@@ -1,0 +1,7 @@
+name: bidderId
+in: query
+required: false
+description: The Fileter bidderId
+schema:
+    type: string
+    example: 

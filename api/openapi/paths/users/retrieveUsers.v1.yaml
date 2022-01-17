@@ -1,0 +1,48 @@
+summary: Get all Users
+operationId: retrieveUsers
+x-eov-operation-handler: UsersController
+
+x-security-scopes:
+  - admin
+  - consumer
+
+
+tags:
+  - User
+
+parameters:
+  - $ref: "../../parameters/query/firstName.v1.yaml"
+  - $ref: "../../parameters/query/lastName.v1.yaml"
+  - $ref: "../../parameters/query/description.v1.yaml"
+  - $ref: "../../parameters/query/username.v1.yaml"
+  - $ref: "../../parameters/query/email.v1.yaml"
+  - $ref: "../../parameters/query/facebookId.v1.yaml"
+  - $ref: "../../parameters/query/instagramId.v1.yaml"
+  - $ref: "../../parameters/query/twitterId.v1.yaml"
+  - $ref: "../../parameters/query/mysiteId.v1.yaml"
+  - $ref: "../../parameters/query/followers.v1.yaml"
+  - $ref: "../../parameters/query/totalEthereum.v1.yaml"
+  - $ref: "../../parameters/query/status.v1.yaml"
+  - $ref: "../../parameters/query/level.v1.yaml"
+  - $ref: "../../parameters/query/role.v1.yaml"
+
+
+responses:
+  "200":
+    description: Operation Executed
+  default:
+    description: A standard error object.
+    content:
+      application/json:
+        schema:
+          properties:
+            code:
+              type: string
+              x-faker: "random.number"
+            message:
+              type: string
+              example: Sample error message
+          required:
+            - code
+          x-tags:
+            - Common

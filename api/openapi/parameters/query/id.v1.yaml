@@ -1,0 +1,7 @@
+name: id
+in: query
+required: false
+description: The Fileter id
+schema:
+    type: string
+    example: 

@@ -1,0 +1,20 @@
+title: Update Collection with Id
+type: object
+description: An array of fields that we want to change name and value
+properties:
+  ownerId:
+    type: string
+  title:
+    type: string
+  owner:
+    type: string
+  category:
+    type: string
+    enum:
+      - Art
+      - Photography
+      - Games
+      - Metaverses
+      - Music
+      - Domains
+      - Memes

@@ -1,0 +1,8 @@
+name: level
+in: query
+required: false
+description: The Fileter level
+schema:
+    type: string
+    default: anonymous
+    enum: [anonymous,none,bronze,silver,gold,diamond]

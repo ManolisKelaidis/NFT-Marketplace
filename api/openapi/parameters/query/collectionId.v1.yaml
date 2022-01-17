@@ -1,0 +1,7 @@
+name: collectionId
+in: query
+required: false
+description: The Fileter collectionId
+schema:
+    type: string
+    example: 

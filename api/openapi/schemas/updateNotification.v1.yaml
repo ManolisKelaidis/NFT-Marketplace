@@ -1,0 +1,34 @@
+title: Update Notification with Id
+type: object
+description: An array of fields that we want to change name and value
+properties:
+  title:
+    type: string
+    description: A possible title (doesn&amp;#39;t seem it is needed but better to have it)
+    example: A possible title
+  body:
+    type: string
+    description: Text body of the Post
+    example: Something interesting to others
+  click_action:
+    type: string
+    description: In App click_action
+    example: reminder&amp;#x2F;rewiuhfdsl
+  type:
+    type: string
+    description: Notification type
+    default: wall
+    enum:
+      - user
+      - asset
+      - bid
+      - chat
+  status:
+    type: string
+    description: Notification status
+    default: new
+    enum:
+      - new
+      - hidden
+      - read
+      - deleted

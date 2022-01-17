@@ -1,0 +1,20 @@
+{
+  "name": "ethereum",
+  "version": "1.0.0",
+  "description": "A project that compiles smart contracts and does ethereum automations with truffle",
+  "main": "index.js",
+  "scripts": {
+    "truffle:compile": "npx truffle compile && cp ./abis/* ../gallery/src/abis/.",
+    "truffle:migrate-rinkeby": "npx truffle migrate -f 3 --network rinkeby && cp ./abis/* ../gallery/src/abis/.",
+    "truffle:migrate-ganache": "npx truffle migrate -f 3 && cp ./abis/* ../gallery/src/abis/.",
+    "truffle:migrate-AWS": "npx truffle migrate -f 3 --network AWSquorum && cp ./abis/* ../gallery/src/abis/.",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "@openzeppelin/contracts": "^4.1.0",
+    "truffle-hdwallet-provider": "^1.0.16"
+  }
+}

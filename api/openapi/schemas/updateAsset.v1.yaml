@@ -1,0 +1,39 @@
+title: Update Asset with Id
+type: object
+description: An array of fields that we want to change name and value
+properties:
+  ownerId:
+    type: string
+  owner:
+    type: string
+  collectionId:
+    type: string
+  yearCreated:
+    type: string
+    example: Wed Jul 07 2021 12:31:21 GMT+0200 (Central European Summer Time)
+  description:
+    type: string
+    example: New Description
+  title:
+    type: string
+    example: New Title
+  price:
+    type: string
+    example: 1.5
+  likes:
+    type: string
+    example: 200
+  file:
+    type: string
+    format: binary
+  royalty:
+    type: string
+    example: 5
+  properties:
+    type: string
+  saleType:
+    type: string
+    enum:
+      - PutOnSale
+      - InstantSalePrice
+      - UnlockOnePurchased

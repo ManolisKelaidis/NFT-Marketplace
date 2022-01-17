@@ -1,0 +1,7 @@
+name: twitterId
+in: query
+required: false
+description: The Fileter twitterId
+schema:
+    type: string
+    example: 

@@ -1,0 +1,7 @@
+name: email
+in: query
+required: false
+description: The Fileter email
+schema:
+    type: string
+    example: 

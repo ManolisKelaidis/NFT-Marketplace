@@ -1,0 +1,7 @@
+name: username
+in: query
+required: false
+description: The Fileter username
+schema:
+    type: string
+    example: 

@@ -1,0 +1,7 @@
+name: ownerId
+in: query
+required: false
+description: The Fileter ownerId
+schema:
+    type: string
+    example: 

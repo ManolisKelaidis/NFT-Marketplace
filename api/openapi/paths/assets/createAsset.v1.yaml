@@ -1,0 +1,38 @@
+summary: Create Asset
+operationId: createAsset
+x-eov-operation-handler: AssetsController
+ 
+x-security-scopes:
+  - admin
+  - consumer
+
+
+tags: 
+  - Asset
+
+requestBody:
+  description: information that is needed for Asset
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        $ref: "../../schemas/Asset.v1.yaml"
+responses:
+  "200":
+    description: Operation Executed
+  default:
+    description: A standard error object.
+    content:
+      application/json:
+        schema:
+          properties:
+            code:
+              type: string
+              x-faker: "random.number"
+            message:
+              type: string
+              example: Sample error message
+          required:
+            - code
+          x-tags:
+            - Common

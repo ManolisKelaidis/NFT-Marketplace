@@ -1,0 +1,28 @@
+summary: Login user
+operationId: login
+x-eov-operation-handler: AuthController
+tags:
+  - Auth
+
+security: [] # No security
+requestBody:
+  description: Parameters (username, email, password, pin) needed to login
+  content:
+    application/json:
+      schema:
+        properties:
+          email:
+            example: some@one.com
+            type: string
+          password:
+            example: klgfjdgk
+            type: string
+          username:
+            example: someone
+            type: string
+          pin:
+            example: "876543"
+            type: string
+responses:
+  "200":
+    description: Login Executed

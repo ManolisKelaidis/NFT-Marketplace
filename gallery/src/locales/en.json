@@ -1,0 +1,192 @@
+{
+  "menu": {
+    "nft-marketplace": "NTF Marketplace",
+    "community": "Community",
+    "home": "Home",
+    "users": "Users",
+    "collections": "Collections",
+    "explore": "Explore",
+    "privacy-policy": "Privacy Policy",
+    "contacts": "Contacts",
+    "unitok": "Unitok",
+    "help-center": "Help Center",
+    "our-blog": "Our Blog",
+    "profile": "Profile",
+    "activity": "Activity",
+    "add-certification": "Add Certification",
+    "add-asset": "Add Asset",
+    "add-collection": "Add Collection",
+    "settings": "Settings"
+  },
+  "footer": {
+    "tagline": "Digital marketplace for crypto collectibles <br /> and non-fungible tokens (NFTs). <br /> Buy, sell, and discover exclusive digital assets."
+  },
+  "new-certification-page": {
+    "title": "Create  new certification"
+  },
+  "login-page": {
+    "disconnect": "Disconnect yout wallet",
+    "download-metamask": "Download Metamask",
+    "connect": "Connect your Wallet",
+    "login": "LOGIN",
+    "remember": "Remember Me",
+    "or": "or",
+    "no-account": "Don't have an account?",
+    "signup": "Sign up!",
+    "forgot-password": "Forgot password?"
+  },
+  "create-password-page": {
+    "create_password": "Create your password",
+    "password": "Password",
+    "confirm": "confirm"
+  },
+  "register-page": {
+    "register": "REGISTER",
+    "or": "or",
+    "with-account": "Already have an account?",
+    "signin": "Sign in!",
+    "send_confirmation": "SEND CONFIRMATION"
+  },
+  "forgot-password-page": {
+    "send": "SEND",
+    "send-email": "We will send a password to your Email"
+  },
+  "auth-home-page": {
+    "title": "Welcome to Home Page"
+  },
+  "explore-page": {
+    "title": "Explore exclusive digital assets",
+    "keyword": "Keyword:",
+    "sort-by": "Sort by:",
+    "category": "Category:"
+  },
+  "user-details-page": {
+    "profile-details": "Profile details",
+    "change-password": "Change password"
+  },
+  "item-details-page": {
+    "description": "Description",
+    "creator": "Creator",
+    "owner": "Owner",
+    "collection": "Collection",
+    "year-created": "Year created",
+    "buy": "Buy - {{price}} ETH",
+    "bid": "Place a Bid",
+    "copy-link": "copy link",
+    "tabs": {
+      "history": "Hystory",
+      "bid": "Bid",
+      "details": "Details"
+    },
+    "history-item": "Bid placed for <strong>{{bid}} ETH</strong> {{created}} <br/> by"
+  },
+  "new-item-page": {
+    "title": "Create collectible item",
+    "form": {
+      "placeholder": {
+        "upload-file": "e. g. Image, Audio, Video",
+        "item-name": "Item Name",
+        "your-site": "Your website",
+        "your-instagram": "Your Instagram",
+        "your-facebook": "Your Facebook",
+        "your-twitter": "Your Twitter",
+        "description": "e. g. 'After purchasing you will able to recived...'",
+        "size": "e. g. Size",
+        "price": "10$",
+        "properties": "e. g. Subject"
+      }
+    }
+  },
+  "new-collection-page": {
+    "title": "Create a new collection"
+  },
+  "contact-page": {
+    "title": "Contacts",
+    "info": "Info",
+    "info-description": "It is a long fact that a reader will be distracted by the readable content of a page when looking at its layout.",
+    "form": {
+      "placeholder": {
+        "name": "Name",
+        "email": "Email",
+        "subject": "Subject",
+        "description": "Type your message"
+      }
+    }
+  },
+  "page-404": {
+    "message": "The page you are looking for not available!",
+    "back": "GO BACK"
+  },
+  "form": {
+    "address": "Address",
+    "price": "Price",
+    "name": "Name",
+    "link": "External Link",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "first-name": "First name",
+    "last-name": "Last name",
+    "old-password": "Old password",
+    "new-password": "New password",
+    "confirm-new-password": "Confirm new password",
+    "terms-agree": {
+      "agree": "I agree to the ",
+      "terms": "Privacy Policy"
+    },
+    "item-name": "Name",
+    "description": "Description",
+    "royalties": "Royalties",
+    "size": "Size",
+    "properties": "Properties"
+  },
+  "validation": {
+    "required": {
+      "category": "Category is required",
+      "name": "Name is required",
+      "username": "Username is required",
+      "email": "Email is required",
+      "password": "Password is required",
+      "first-name": "First name is required",
+      "last-name": "Last name is required",
+      "old-password": "Old password is required",
+      "new-password": "New password is required",
+      "confirm-new-password": "Confirm new password is required",
+      "terms": "Accept Terms & Conditions is required",
+      "item-name": "Item name is required",
+      "item-title": "Item title is required",
+      "description": "Description is required",
+      "royalties": "Royalties is required",
+      "size": "Size is required",
+      "properties": "Properties is required",
+      "type": "Type is required",
+      "subject": "Subject is reqired",
+      "address": "Address is required"
+    },
+    "invalid": {
+      "email": "Invalid email",
+      "confirm-password": "Password must be the same"
+    }
+  },
+  "explore-items": {
+    "art": "Art",
+    "photography": "Photography",
+    "games": "Games",
+    "music": "Music",
+    "domains": "Domains",
+    "de-fi": "DeFi",
+    "metaverses": "Metaverses",
+    "memes": "Memes"
+  },
+  "upload-file": "Upload file",
+  "logo-image": "Logo image",
+  "item-details": "Item details",
+  "create-item": "Create item",
+  "select-item": "Select...",
+  "send": "Send",
+  "sign-in": "Sign in",
+  "sign-out": "Sign out",
+  "filters": "Filters",
+  "clear-all": "Clear all",
+  "apply-filters": "Apply filters"
+}

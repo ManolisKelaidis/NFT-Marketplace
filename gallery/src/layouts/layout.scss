@@ -1,0 +1,11 @@
+main {
+  --main-top-margin: 70px;
+  --menu-height: 50px;
+  --footer-height: 396px;
+
+  &.main {
+    min-height: calc(
+      100vh + var(--main-top-margin) - var(--menu-height) - var(--footer-height)
+    );
+  }
+}

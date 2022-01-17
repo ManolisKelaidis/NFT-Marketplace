@@ -1,0 +1,21 @@
+summary: Login user
+operationId: loginUser
+x-eov-operation-handler: UsersController
+tags:
+  - User
+
+security: [] # No security
+requestBody:
+  description: email and password to login
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          email:
+            type: string
+          password:
+            type: string
+responses:
+  "200":
+    description: Login Executed

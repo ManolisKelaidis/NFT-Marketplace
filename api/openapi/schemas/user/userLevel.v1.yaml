@@ -1,0 +1,4 @@
+title: Schema for level with Id
+type: object
+description: The Values we need
+properties: 

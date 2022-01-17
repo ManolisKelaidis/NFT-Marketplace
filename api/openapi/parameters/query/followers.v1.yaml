@@ -1,0 +1,7 @@
+name: followers
+in: query
+required: false
+description: The Fileter followers
+schema:
+    type: string
+    example: 

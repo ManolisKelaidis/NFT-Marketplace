@@ -1,0 +1,6 @@
+name: certificationId
+in: path
+required: true
+description: The Id of the Certification
+schema:
+  $ref: ./id.v1.yaml

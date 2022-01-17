@@ -1,0 +1,6 @@
+name: assetId
+in: path
+required: true
+description: The Id of the Asset
+schema:
+  $ref: ./id.v1.yaml

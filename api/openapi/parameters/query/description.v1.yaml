@@ -1,0 +1,7 @@
+name: description
+in: query
+required: false
+description: The Fileter description
+schema:
+    type: string
+    example: New Description

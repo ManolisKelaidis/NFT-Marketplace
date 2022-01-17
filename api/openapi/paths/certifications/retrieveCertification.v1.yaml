@@ -1,0 +1,35 @@
+summary: Get Certification with Id
+operationId: retrieveCertification
+x-eov-operation-handler: CertificationsController
+
+x-security-scopes:
+  - admin
+  - consumer
+
+ 
+tags:
+  - Certification
+
+parameters:
+  - $ref: "../../parameters/path/certificationId.v1.yaml"
+
+
+responses:
+  "200":
+    description: Operation Executed
+  default:
+    description: A standard error object.
+    content:
+      application/json:
+        schema:
+          properties:
+            code:
+              type: string
+              x-faker: "random.number"
+            message:
+              type: string
+              example: Sample error message
+          required:
+            - code
+          x-tags:
+            - Common
